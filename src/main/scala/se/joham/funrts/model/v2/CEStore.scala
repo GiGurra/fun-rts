@@ -68,7 +68,7 @@ object Acting {
 
 case class CESystem[T <: Component](entries: mutable.Map[Entity, T] = new mutable.HashMap[Entity, T]) extends mutable.Map[Entity, T] {
 
-   override def apply(key: Entity): T = entries.apply(key)
+  override def apply(key: Entity): T = entries.apply(key)
   override def get(key: Entity): Option[T] = entries.get(key)
   override def iterator: Iterator[(Entity, T)] = entries.iterator
 
@@ -82,12 +82,6 @@ case class CESystem[T <: Component](entries: mutable.Map[Entity, T] = new mutabl
   * Created by johan on 2016-06-11.
   */
 case class CEStore(systems: mutable.Map[Id, CESystem[_ <: Component]] = new mutable.HashMap[Id, CESystem[_ <: Component]]) extends mutable.Map[Id, CESystem[_ <: Component]] {
-  object implicits {
-    implicit val positionable = system[Positionable]
-    implicit val acting = system[Acting]
-    implicit val baseInfo = system[BaseInfo]
-    implicit val moveLimits = system[MovementLimits]
-  }
 
   def system[T <: Component : ComponentTypeIdentifier]: CESystem[T] = {
     systems.getOrElseUpdate(implicitly[ComponentTypeIdentifier[T]].typeId, CESystem[T]()).asInstanceOf[CESystem[T]]

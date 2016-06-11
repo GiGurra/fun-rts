@@ -67,7 +67,9 @@ class CEStoreSpec
 
     "create an entity using a Builder" in {
       implicit val store = CEStore()
-      import store.implicits._
+      implicit val pSystem = store.system[Positionable]
+      implicit val aSystem = store.system[Acting]
+
       val a: Entity = Entity.Builder
       val b: Entity = Entity.Builder + Positionable(1,2)
       val c: Entity = Entity.Builder + Positionable(1,2) + Acting(MovingTo(2,2))

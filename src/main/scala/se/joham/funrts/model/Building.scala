@@ -5,7 +5,8 @@ import se.joham.funrts.math.Vec2FixPt
   * Created by johan on 2016-06-11.
   */
 case class Building(name: String,
-                    pos: Pos,
+                    team: Team,
+                    pos: Pos = Vec2FixPt(0,0),
                     size: Size = Vec2FixPt(2,2),
-                    id: String = Id.gen()) extends Entity {
+                    id: Id = Id.gen()) extends Entity {
 }

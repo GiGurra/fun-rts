@@ -84,7 +84,7 @@ case class CESystem[T <: Component](entries: mutable.Map[Entity, T] = new mutabl
 case class CEStore(systems: mutable.Map[Id, CESystem[_ <: Component]] = new mutable.HashMap[Id, CESystem[_ <: Component]]) extends mutable.Map[Id, CESystem[_ <: Component]] {
 
   def system[T <: Component : ComponentTypeIdentifier]: CESystem[T] = {
-    systems.getOrElseUpdate(implicitly[ComponentTypeIdentifier[T]].typeId, CESystem[T]()).asInstanceOf[CESystem[T]]
+    systemOf(implicitly[ComponentTypeIdentifier[T]]).asInstanceOf[CESystem[T]]
   }
 
   def allEntities: Set[Entity] = {

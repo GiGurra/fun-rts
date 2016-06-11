@@ -3,6 +3,7 @@ package se.joham.funrts.model.v2
 import org.scalatest._
 import org.scalatest.mock._
 import se.joham.funrts.math.Vec2FixPt
+import se.joham.funrts.model.v2.components.{Acting, MovementLimits, Positionable}
 import se.joham.funrts.model.{GroundLevelGenerator, Level, MovingTo}
 
 class CEStoreSpec
@@ -70,13 +71,13 @@ class CEStoreSpec
       implicit val pSystem = store.system[Positionable]
       implicit val aSystem = store.system[Acting]
 
-      val a: Entity = Entity.Builder
-      val b: Entity = Entity.Builder + Positionable(1,2)
-      val c: Entity = Entity.Builder + Positionable(1,2) + Acting(MovingTo(2,2))
+      val a: Entity = Entity.builder
+      val b: Entity = Entity.builder + Positionable(1,2)
+      val c: Entity = Entity.builder + Positionable(1,2) + Acting(MovingTo(2,2))
 
-      a.components shouldBe Seq()
-      b.components shouldBe Seq(Positionable(1,2))
-      c.components shouldBe Seq(Positionable(1,2), Acting(MovingTo(2,2)))
+      a.components.toSet shouldBe Set()
+      b.components.toSet shouldBe Set(Positionable(1,2))
+      c.components.toSet shouldBe Set(Positionable(1,2), Acting(MovingTo(2,2)))
 
       b[Positionable].pos shouldBe Vec2FixPt(1,2)
       c[Acting].action shouldBe MovingTo(2,2)

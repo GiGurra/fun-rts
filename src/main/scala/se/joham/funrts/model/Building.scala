@@ -6,7 +6,12 @@ import se.joham.funrts.math.Vec2FixPt
   */
 case class Building(name: String,
                     team: Team,
+                    var action: Action = Idle(),
                     pos: Pos = Vec2FixPt(0,0),
                     size: Size = Vec2FixPt(2,2),
                     id: Id = Id.gen()) extends Entity {
+
+  override def setAction(action: Action): Unit = {
+    this.action = action
+  }
 }

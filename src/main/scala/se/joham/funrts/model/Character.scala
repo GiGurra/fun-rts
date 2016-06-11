@@ -7,8 +7,12 @@ import se.joham.funrts.math.Vec2FixPt
   */
 case class Character(name: String,
                      team: Team,
-                     pos: Pos = Vec2FixPt(0,0),
+                     var action: Action = Idle(),
+                     var pos: Pos = Vec2FixPt(0,0),
                      size: Size = Vec2FixPt(1,1),
                      id: String = Id.gen()) extends Entity {
-}
 
+  override def setAction(action: Action): Unit = {
+    this.action = action
+  }
+}

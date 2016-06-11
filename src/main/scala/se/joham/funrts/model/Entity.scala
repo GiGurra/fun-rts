@@ -9,4 +9,6 @@ trait Entity {
   def pos: Pos
   def size: Size
   def team: Team
+  def action: Action
+  def setAction(action: Action): Unit
 }

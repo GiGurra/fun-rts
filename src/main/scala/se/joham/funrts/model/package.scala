@@ -9,6 +9,7 @@ import se.joham.funrts.util.Bits
 package object model {
   type Pos = Vec2FixPt
   type Id = String
+  type PlayerId = String
   type Size = Vec2FixPt
   type Cell = Byte
 

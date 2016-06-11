@@ -30,7 +30,9 @@ case class GameSimulation(level: Level,
     }
   }
 
-  private def findPlayer(playerId: PlayerId): Option[Player] = players.find(_.id == playerId)
+  private def findPlayer(playerId: PlayerId): Option[Player] = {
+    players.find(_.id == playerId)
+  }
 
   private def validateInputs(aggregatedCommands: AggregatedCommands) = {
     def commandOnlyOwnedEntities: Boolean = {

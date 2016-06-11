@@ -26,7 +26,10 @@ case class GameSimulation(level: Level,
       command <- commands
       entity  <- level.entity(command.entityId)
     } {
-      entity.setAction(command.action)
+      entity match {
+        case state@StateFul(c: Character) => state.update(c.copy(action = command.action))
+        case state@StateFul(b: Building) => state.update(b.copy(action = command.action))
+      }
     }
   }
 

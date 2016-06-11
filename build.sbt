@@ -15,7 +15,9 @@ val funrts = Project(id = "funrts", base = file("."))
       "com.badlogicgames.gdx" %   "gdx-platform"          % ext_libgdxVersion classifier "natives-desktop",
       "com.badlogicgames.gdx" %   "gdx-freetype-platform" % ext_libgdxVersion classifier "natives-desktop",
       "net.java.dev.jna"      %   "jna-platform"          % "4.2.2",
-      "net.java.dev.jna"      %   "jna"                   % "4.2.2"
+      "net.java.dev.jna"      %   "jna"                   % "4.2.2",
+      "org.scalatest"        %%   "scalatest"             %   "2.2.4"     %   "test",
+      "org.mockito"           %   "mockito-core"          %   "1.10.19"   %   "test"
     )
     
   )

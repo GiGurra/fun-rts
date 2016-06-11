@@ -9,5 +9,4 @@ object Cell {
   val TYPE_BRIDGE  = 0x05 : Byte
 
   val TYPE_BITS    = 0x0F : Byte
-  val UNIT_OCC_BIT = 0x40 : Byte
 }

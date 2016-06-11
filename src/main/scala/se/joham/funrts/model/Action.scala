@@ -1,5 +1,7 @@
 package se.joham.funrts.model
 
+import se.joham.funrts.math.Vec2FixPt
+
 /**
   * Created by johan on 2016-06-11.
   */
@@ -13,3 +15,7 @@ case class ChoppingLumber(pos: Pos) extends Action
 case class BuildingUnit() extends Action
 case class Researching() extends Action
 case class BuildingBuilding() extends Action
+
+object MovingTo {
+  def apply(x: Long, y: Long): MovingTo = MovingTo(Vec2FixPt(x,y))
+}

@@ -16,6 +16,15 @@ case class Entity(id: Id) extends AnyVal {
   def component[T <: Component: ComponentTypeIdentifier](implicit system: CESystem[T]): T = apply[T]
   def getComponent[T <: Component: ComponentTypeIdentifier](implicit system: CESystem[T]): Option[T] = get[T]
   def components(implicit store: CEStore): Iterable[Component] = store.componentsOf(this)
+
+  def info(implicit store: CEStore): String = {
+    val buffer = new StringBuffer()
+    buffer.append(s"Entity: $id\n")
+    for (component <- components) {
+      buffer.append(s"  ${component.typeIdentifier.typeId}: $component")
+    }
+    buffer.toString
+  }
 }
 object Entity {
   def builder(id: Id)(implicit store: CEStore): Builder = new Builder(Entity(id))

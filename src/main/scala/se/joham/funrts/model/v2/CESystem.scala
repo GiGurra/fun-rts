@@ -7,7 +7,6 @@ import scala.language.implicitConversions
   * Created by johan on 2016-06-12.
   */
 case class CESystem[T <: Component](entries: mutable.Map[Entity, T] = new mutable.HashMap[Entity, T]) {
-
 }
 
 object CESystem {

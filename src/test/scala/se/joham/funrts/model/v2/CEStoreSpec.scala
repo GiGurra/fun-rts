@@ -1,13 +1,17 @@
 package se.joham.funrts.model.v2
 
+import java.nio.ByteBuffer
+
 import org.json4s.{CustomKeySerializer, CustomSerializer, Extraction}
 import org.json4s.JsonAST.{JField, JObject, JString}
 import org.scalatest._
 import org.scalatest.mock._
 import se.joham.funrts.math.Vec2FixPt
-import se.joham.funrts.model.v2.components.{Acting, MovementLimits, Positionable}
-import se.joham.funrts.model.{GroundLevelGenerator, Level, MovingTo}
+import se.joham.funrts.model.v2.components._
+import se.joham.funrts.model.{GroundLevelGenerator, Level, MovingTo, Team}
 import se.joham.funrts.util.JSON
+
+import scala.collection.mutable
 
 class CEStoreSpec
   extends WordSpec
@@ -86,26 +90,28 @@ class CEStoreSpec
       c[Acting].action shouldBe MovingTo(2,2)
     }
 
-    "Write a CEStore as JSOn" in {
-
-      // JSON 3.3.0 doesn't support deserializing into mutable collections :(
-      // It's planned for 3.4.0.. but that hasn't been released yet :S
-      // https://github.com/json4s/json4s/pull/310
+    "Write a CEStore as JSOn and read it back" in {
 
       implicit val store = CEStore()
 
-      val json = JSON.write(store, pretty = true)
-
-      println(json)
-/*
-      val storeBack = JSON.read[CEStore](json)
-
       implicit val pSystem = store.system[Positionable]
       implicit val aSystem = store.system[Acting]
+      implicit val mSystem = store.system[MovementLimits]
+      implicit val bSystem = store.system[BaseInfo]
 
       val a: Entity = Entity.builder("id1")
       val b: Entity = Entity.builder("id2") + Positionable(1,2)
-      val c: Entity = Entity.builder("id3") + Positionable(1,2) + Acting(MovingTo(2,2))*/
+      val c: Entity = Entity.builder("id3") + Positionable(1,2) + Acting(MovingTo(2,2))
+      val d: Entity = Entity.builder("id4") + Positionable(1,2) + Acting(MovingTo(2,2)) + MovementLimits(1L)
+      val e: Entity = Entity.builder("id5") + Positionable(1,2) + Acting(MovingTo(2,2)) + MovementLimits(1L) + BaseInfo("lala", Team.blue)
+
+      val json = JSON.write(store, pretty = false)
+      println(json)
+
+      val storeBack = JSON.read[CEStore](json)
+      println(JSON.write(storeBack, pretty = false))
+
+      storeBack shouldBe store
 
     }
 

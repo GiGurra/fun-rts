@@ -17,5 +17,19 @@ case class Researching() extends Action
 case class BuildingBuilding() extends Action
 
 object MovingTo {
-  def apply(x: Long, y: Long): MovingTo = MovingTo(Vec2FixPt(x,y))
+  def apply(x: Long, y: Long): MovingTo = MovingTo(Vec2FixPt(x, y))
+}
+
+object Action {
+  val classes = List(
+    classOf[Idle],
+    classOf[MovingTo],
+    classOf[AttackingArea],
+    classOf[AttackingEntity],
+    classOf[MiningGold],
+    classOf[ChoppingLumber],
+    classOf[BuildingUnit],
+    classOf[Researching],
+    classOf[BuildingBuilding]
+  )
 }

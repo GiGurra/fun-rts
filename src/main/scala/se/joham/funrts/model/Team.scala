@@ -10,4 +10,8 @@ case object Neutral extends Team
 object Team {
   val blue = Combatant("blue")
   val red = Combatant("red")
+  val classes = List(
+    classOf[Combatant],
+    Neutral.getClass
+  )
 }

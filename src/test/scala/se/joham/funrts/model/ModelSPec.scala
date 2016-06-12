@@ -9,6 +9,7 @@ import org.scalatest._
 import org.scalatest.mock._
 import se.gigurra.franklin.Collection._
 import se.joham.funrts.math.Vec2FixPt
+import se.joham.funrts.model.components.{BaseInfo, MovementLimits, Positionable}
 
 class ModelSpec
   extends WordSpec
@@ -20,44 +21,53 @@ class ModelSpec
 
   val levelGen = GroundLevelGenerator
   val level = Level(10, 10, seed = "test", levelGen)
+  val store = level.entityStore
+
+  def makeBuilding(id: EntityId, name: String, pos: Pos, team: Team, size: Size = Vec2FixPt(2,2))(implicit store: CEStore): Entity = {
+    Entity.builder(id) + Positionable(pos, size) + BaseInfo(name, team)
+  }
+
+  def makeCharacter(id: EntityId, name: String, pos: Pos, team: Team)(implicit store: CEStore): Entity = {
+    Entity.builder(id) + Positionable(pos) + MovementLimits(2L) + BaseInfo(name, team)
+  }
 
   "Model" should {
 
     "Level" should {
       "be able to add and get entities of different types from a Level" in {
-        val b = Building(id = "b", name = "farm", pos = Vec2FixPt(1,1), team = Team.blue)
-        val c = Character(id = "c", name = "footman", pos = Vec2FixPt(0,0), team = Team.blue)
 
-        level += b
-        level += c
+        import level._
 
-        level.entitiesOfType[Building].map(_.state) shouldBe Seq(b)
-        level.entitiesOfType[Character].map(_.state) shouldBe Seq(c)
+        store.allEntities.size shouldBe 0
 
-      }
+        val b = makeBuilding(id = "b", name = "farm", pos = Vec2FixPt(1,1), team = Team.blue)
+        val c = makeCharacter(id = "c", name = "footman", pos = Vec2FixPt(0,0), team = Team.blue)
 
-      "find entity by ID" in {
-        val b = Building(id = "b", name = "farm", pos = Vec2FixPt(1,1), team = Team.blue)
-        val c = Character(id = "c", name = "footman", pos = Vec2FixPt(0,0), team = Team.blue)
+        store.allEntities.size shouldBe 2
 
-        level += b
-        level += c
-
-        level.entity(b.id) shouldBe Some(StateFul(b))
-        level.entity(c.id) shouldBe Some(StateFul(c))
-        level.entity("lalala") shouldBe None
-
+        b[Positionable] shouldBe Positionable(1,1)
+        c[MovementLimits] shouldBe MovementLimits(2)
       }
 
       "Not overlap positions between buildings and characters" in {
-        val character = Character(id = "character", name = "footman", pos = Vec2FixPt(2,2), team = Team.blue)
-        val building = Building(id = "building", name = "farm", pos = Vec2FixPt(1,1), size = Vec2FixPt(2,2), team = Team.blue)
+        import level._
 
-        level += building
+        val building = makeBuilding(id = "building", name = "farm", pos = Vec2FixPt(1,1), size = Vec2FixPt(2,2), team = Team.blue)
 
-        level.canPlace(character) shouldBe false
-        a[IllegalArgumentException] should be thrownBy (level += character)
+        // throw if conflicting position
+        // a[RuntimeException] should be thrownBy makeCharacter(id = "character", name = "footman", pos = Vec2FixPt(2,2), team = Team.blue)
 
+        level.isOccupied(Vec2FixPt(1,1)) shouldBe true
+        level.isOccupied(Vec2FixPt(1,2)) shouldBe true
+        level.isOccupied(Vec2FixPt(2,1)) shouldBe true
+        level.isOccupied(Vec2FixPt(2,2)) shouldBe true
+        level.isOccupied(Vec2FixPt(3,2)) shouldBe false
+
+        level.isVacant(Vec2FixPt(1,1)) shouldBe false
+        level.isVacant(Vec2FixPt(1,2)) shouldBe false
+        level.isVacant(Vec2FixPt(2,1)) shouldBe false
+        level.isVacant(Vec2FixPt(2,2)) shouldBe false
+        level.isVacant(Vec2FixPt(3,2)) shouldBe true
       }
     }
 

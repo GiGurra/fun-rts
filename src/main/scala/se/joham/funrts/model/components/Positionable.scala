@@ -10,7 +10,7 @@ import scala.language.implicitConversions
   */
 case class Positionable(pos: Pos,
                         size: Size = Vec2FixPt(1,1),
-                        acceptedTiles: Set[Cell.Type] = Set(Cell.TYPE_GROUND, Cell.TYPE_BRIDGE)) extends Component {
+                        acceptedTiles: Set[Byte] = Set(Cell.TYPE_GROUND, Cell.TYPE_BRIDGE)) extends Component {
 
   lazy val positions: Set[Pos] = (for {
     x <- 0 until size.x.toInt

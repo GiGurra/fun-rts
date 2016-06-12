@@ -26,7 +26,7 @@ case class CEStore(systems: mutable.Map[ComponentSystemId, CESystem[Component]] 
       system <- systems.values
       component <- system.get(from)
     } {
-      system.asInstanceOf[CESystem[Component]].put(to, component)
+      system.put(to, component)
     }
   }
 

@@ -6,4 +6,4 @@ package se.joham.funrts.model
 case class AggregatedCommands(iStep: Int, playerCommands: Map[PlayerId, Seq[Command]]) {
   def players: Set[PlayerId] = playerCommands.keys.toSet
 }
-case class Command(action: Action, entityId: Id)
+case class Command(action: Action, entityId: EntityId)

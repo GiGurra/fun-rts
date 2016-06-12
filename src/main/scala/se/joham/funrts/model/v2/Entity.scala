@@ -1,12 +1,12 @@
 package se.joham.funrts.model.v2
 
 import scala.language.implicitConversions
-import se.joham.funrts.model.{Id, _}
+import se.joham.funrts.model._
 
 /**
   * Created by johan on 2016-06-12.
   */
-case class Entity(id: Id) extends AnyVal {
+case class Entity(id: EntityId) extends AnyVal {
   def +=[T <: Component: ComponentTypeIdentifier](component: T)(implicit store: CEStore): Entity = {
     store.system[T].entries.put(this, component)
     this
@@ -27,7 +27,7 @@ case class Entity(id: Id) extends AnyVal {
   }
 }
 object Entity {
-  def builder(id: Id)(implicit store: CEStore): Builder = new Builder(Entity(id))
+  def builder(id: EntityId)(implicit store: CEStore): Builder = new Builder(Entity(id))
 
   case class Builder(entity: Entity)(implicit store: CEStore) {
     def +[T <: Component: ComponentTypeIdentifier](component: T): Builder = {

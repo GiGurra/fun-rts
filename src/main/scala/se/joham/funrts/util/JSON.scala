@@ -26,12 +26,12 @@ object JSON {
 
   //////////////////////////////////////////////////////////////////////////////////////
 
-  case class CESystemSerialized(entries: Map[Id, Component]) {
+  case class CESystemSerialized(entries: Map[EntityId, Component]) {
     def system: CESystem[Component] = new CESystem[Component](new mutable.HashMap[Entity, Component] ++ entries.map(p => Entity(p._1) -> p._2))
   }
 
-  case class CEStoreSerialized(systems: Map[Id, CESystemSerialized]) {
-    def store: CEStore = CEStore(new mutable.HashMap[Id, CESystem[Component]] ++ systems.mapValues(_.system))
+  case class CEStoreSerialized(systems: Map[ComponentSystemId, CESystemSerialized]) {
+    def store: CEStore = CEStore(new mutable.HashMap[ComponentSystemId, CESystem[Component]] ++ systems.mapValues(_.system))
   }
 
   def sys2serializable(system: CESystem[_]) = CESystemSerialized(system.asInstanceOf[CESystem[Component]].entries.toMap.map(p => p._1.id -> p._2))

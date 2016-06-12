@@ -7,7 +7,9 @@ import se.joham.funrts.math.Vec2FixPt
   */
 package object model {
   type Pos = Vec2FixPt
-  type Id = String
+  type EntityId = String
+  type CombatantId = String
+  type ComponentSystemId = String
   type PlayerId = String
   type Size = Vec2FixPt
   type Cell = Byte

@@ -4,7 +4,7 @@ import se.joham.funrts.math.Vec2FixPt
 /**
   * Created by johan on 2016-06-11.
   */
-case class Building(id: Id,
+case class Building(id: EntityId,
                     name: String,
                     team: Team,
                     action: Action = Idle(),

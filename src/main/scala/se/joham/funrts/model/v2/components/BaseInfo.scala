@@ -12,6 +12,6 @@ case class BaseInfo(name: String, team: Team) extends Component {
 
 object BaseInfo {
   implicit val typ = new ComponentTypeIdentifier[BaseInfo] {
-    override val typeId: Id = "BaseInfo"
+    override val typeId: ComponentSystemId = "BaseInfo"
   }
 }

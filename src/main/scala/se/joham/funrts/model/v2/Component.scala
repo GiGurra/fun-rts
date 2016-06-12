@@ -8,7 +8,7 @@ import se.joham.funrts.model.v2.components.{Acting, BaseInfo, MovementLimits, Po
   */
 trait Component { def typeIdentifier: ComponentTypeIdentifier[_ <: Component] }
 trait ComponentTypeIdentifier[+T <: Component] {
-  val typeId: Id
+  val typeId: ComponentSystemId
 }
 
 object Component {

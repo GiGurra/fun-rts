@@ -1,6 +1,6 @@
 package se.joham.funrts.model.v2.components
 
-import se.joham.funrts.model.{Action, Id}
+import se.joham.funrts.model._
 import se.joham.funrts.model.v2.{Component, ComponentTypeIdentifier}
 
 /**
@@ -12,6 +12,6 @@ case class Acting(action: Action) extends Component {
 
 object Acting {
   implicit val typ = new ComponentTypeIdentifier[Acting] {
-    override val typeId: Id = "Acting"
+    override val typeId: ComponentSystemId = "Acting"
   }
 }

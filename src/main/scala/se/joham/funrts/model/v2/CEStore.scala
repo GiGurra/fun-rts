@@ -7,7 +7,7 @@ import scala.language.implicitConversions
 /**
   * Created by johan on 2016-06-11.
   */
-case class CEStore(systems: mutable.Map[Id, CESystem[Component]] = new mutable.HashMap[Id, CESystem[Component]]) {
+case class CEStore(systems: mutable.Map[ComponentSystemId, CESystem[Component]] = new mutable.HashMap[ComponentSystemId, CESystem[Component]]) {
 
   def system[T <: Component : ComponentTypeIdentifier]: CESystem[T] = {
     systemOf(implicitly[ComponentTypeIdentifier[T]]).asInstanceOf[CESystem[T]]
@@ -45,12 +45,12 @@ case class CEStore(systems: mutable.Map[Id, CESystem[Component]] = new mutable.H
 }
 
 object CEStore {
-  implicit def store2map(store: CEStore): mutable.Map[Id, CESystem[Component]] = new mutable.Map[Id, CESystem[Component]] {
+  implicit def store2map(store: CEStore): mutable.Map[ComponentSystemId, CESystem[Component]] = new mutable.Map[ComponentSystemId, CESystem[Component]] {
     val systems = store.systems
-    override def get(key: Id): Option[CESystem[Component]] = systems.get(key)
-    override def iterator: Iterator[(Id, CESystem[Component])] = systems.iterator
-    override def put(k: Id, v: CESystem[Component]): Option[CESystem[Component]] = systems.put(k, v)
-    override def +=(kv: (Id, CESystem[Component])): this.type = { systems += kv; this }
-    override def -=(key: Id): this.type = { systems -= key; this }
+    override def get(key: ComponentSystemId): Option[CESystem[Component]] = systems.get(key)
+    override def iterator: Iterator[(ComponentSystemId, CESystem[Component])] = systems.iterator
+    override def put(k: ComponentSystemId, v: CESystem[Component]): Option[CESystem[Component]] = systems.put(k, v)
+    override def +=(kv: (ComponentSystemId, CESystem[Component])): this.type = { systems += kv; this }
+    override def -=(key: ComponentSystemId): this.type = { systems -= key; this }
   }
 }

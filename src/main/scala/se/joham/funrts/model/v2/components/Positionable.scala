@@ -13,7 +13,7 @@ case class Positionable(pos: Pos, size: Size = Vec2FixPt(1,1)) extends Component
 
 object Positionable {
   implicit val typ = new ComponentTypeIdentifier[Positionable] {
-    override val typeId: Id = "Positionable"
+    override val typeId: ComponentSystemId = "Positionable"
   }
   def apply(x: Long, y: Long): Positionable = Positionable(Vec2FixPt(x,y), Vec2FixPt(1,1))
   def apply(x: Long, y: Long, size: Size): Positionable = Positionable(Vec2FixPt(x,y), size)

@@ -8,7 +8,7 @@ import scala.reflect.ClassTag
 /**
   * Created by johan on 2016-06-11.
   */
-case class Level(mesh: Mesh, entityLkup: mutable.HashMap[Id, StateFul[Entity]]) {
+case class Level(mesh: Mesh, entityLkup: mutable.HashMap[EntityId, StateFul[Entity]]) {
 
   def entities = entityLkup.values
 
@@ -17,7 +17,7 @@ case class Level(mesh: Mesh, entityLkup: mutable.HashMap[Id, StateFul[Entity]]) 
   def entitiesOfType[T <: Entity : ClassTag]: Iterable[StateFul[T]] = entityLkup.values.collect { case s@StateFul(e: T) => s.asInstanceOf[StateFul[T]] }
   def buildings: Iterable[StateFul[Building]] = entitiesOfType[Building]
   def characters: Iterable[StateFul[Character]] = entitiesOfType[Character]
-  def entity(id: Id): Option[StateFul[Entity]] = entityLkup.get(id)
+  def entity(id: EntityId): Option[StateFul[Entity]] = entityLkup.get(id)
 
   def +=(entity: Entity): Unit = {
     require(canPlace(entity), s"Cannot place entity ${entity.name + entity.id} at ${entity.positions} - the spot is occupied!")
@@ -83,7 +83,7 @@ object Level {
             seed: String,
             generator: LevelGenerator): Level = {
     val mesh = generator.apply(nx, ny, seed)
-    val entities = new mutable.HashMap[Id, StateFul[Entity]]
+    val entities = new mutable.HashMap[EntityId, StateFul[Entity]]
     new Level(mesh, entities)
   }
 }

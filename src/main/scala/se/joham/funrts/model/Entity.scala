@@ -6,7 +6,7 @@ import se.joham.funrts.math.Vec2FixPt
   * Created by johan on 2016-06-11.
   */
 trait Entity {
-  val id: Id
+  val id: EntityId
   val name: String
   val pos: Pos
   val size: Size

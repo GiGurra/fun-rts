@@ -9,7 +9,8 @@ import org.scalatest._
 import org.scalatest.mock._
 import se.gigurra.franklin.Collection._
 import se.joham.funrts.math.Vec2FixPt
-import se.joham.funrts.model.components.{BaseInfo, MovementLimits, Positionable}
+import se.joham.funrts.model.components.{Acting, BaseInfo, MovementLimits, Positionable}
+import se.joham.funrts.util.JSON
 
 class ModelSpec
   extends WordSpec
@@ -68,6 +69,27 @@ class ModelSpec
         level.isVacant(Vec2FixPt(2,1)) shouldBe false
         level.isVacant(Vec2FixPt(2,2)) shouldBe false
         level.isVacant(Vec2FixPt(3,2)) shouldBe true
+      }
+
+
+      "Be written to JSON and read back" in {
+
+        import level._
+
+        val a: Entity = Entity.builder("id1")
+        val b: Entity = Entity.builder("id2") + Positionable(1,2)
+        val c: Entity = Entity.builder("id3") + Positionable(1,2) + Acting(MovingTo(2,2))
+        val d: Entity = Entity.builder("id4") + Positionable(1,2) + Acting(MovingTo(2,2)) + MovementLimits(1L)
+        val e: Entity = Entity.builder("id5") + Positionable(1,2) + Acting(MovingTo(2,2)) + MovementLimits(1L) + BaseInfo("lala", Team.blue)
+
+        val json = JSON.write(level, pretty = false)
+        println(json)
+
+        val levelBack = JSON.read[Level](json)
+        println(JSON.write(levelBack, pretty = false))
+
+        levelBack shouldBe level
+
       }
     }
 

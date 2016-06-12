@@ -1,5 +1,7 @@
 package se.joham.funrts.model
 
+import java.util
+
 import se.joham.funrts.math.Vec2FixPt
 import se.joham.funrts.model.components.{Acting, BaseInfo, MovementLimits, Positionable}
 
@@ -27,6 +29,13 @@ case class Level(mesh: Mesh, entityStore: CEStore) {
 }
 
 case class Mesh(nx: Int, ny: Int, cells: Array[Cell]) {
+
+  override def equals(other: Any): Boolean = {
+    other match {
+      case m: Mesh => (nx == m.nx) && (ny == m.ny) && util.Arrays.equals(cells, m.cells)
+      case _ => false
+    }
+  }
 
   val size: Size = Vec2FixPt(nx, ny)
 

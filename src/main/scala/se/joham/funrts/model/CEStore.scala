@@ -4,11 +4,24 @@ import scala.collection.mutable
 import scala.language.implicitConversions
 
 trait CEStore {
+  def containsEntity(entity: Entity): Boolean
   def systems: scala.collection.Map[CESystemId, CESystem[Component]]
   def system[T <: Component : ComponentType]: CESystem[T]
-  def allEntities: Set[Entity] // This function is slooooooow
   def -=(entity: Entity): Unit
   def componentsOf(entity: Entity): Iterable[Component]
+
+  @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
+  def duplicate: CEStore
+
+  @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
+  def allEntities: Set[Entity] // This function is slooooooow
+
+  @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
+  def -(entity: Entity): CEStore = {
+    val out = duplicate
+    out -= entity
+    out
+  }
 }
 
 /**
@@ -19,10 +32,6 @@ case class DefaultCEStore(systems: mutable.Map[CESystemId, CESystem[Component]])
   def system[T <: Component : ComponentType]: CESystem[T] = {
     val typ = implicitly[ComponentType[T]]
     systems.getOrElseUpdate(typ.typeId, typ.systemFactory.apply().asInstanceOf[CESystem[Component]]).asInstanceOf[CESystem[T]]
-  }
-
-  def allEntities: Set[Entity] = {
-    systems.values.flatMap(_.keys).toSet
   }
 
   def -=(entity: Entity): Unit = {
@@ -37,6 +46,21 @@ case class DefaultCEStore(systems: mutable.Map[CESystemId, CESystem[Component]])
       component
     }
   }
+
+  def containsEntity(entity: Entity): Boolean = {
+    systems.values.exists(_.contains(entity))
+  }
+  
+  @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
+  def allEntities: Set[Entity] = {
+    systems.values.flatMap(_.keys).toSet
+  }
+
+  @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
+  def duplicate: DefaultCEStore = {
+    copy(systems = new mutable.HashMap[CESystemId, CESystem[Component]] ++ systems.mapValues(_.duplicate))
+  }
+
 }
 
 object CEStore {

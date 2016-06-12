@@ -1,10 +1,11 @@
 package se.joham.funrts.model
 
+import com.twitter.io.Charsets
 import org.scalatest._
 import org.scalatest.mock._
 import se.joham.funrts.math.Vec2FixPt
 import se.joham.funrts.model.components.{Acting, BaseInfo, MovementLimits, Positionable}
-import se.joham.funrts.util.JSON
+import se.joham.funrts.util.{JSON, Zip}
 
 class ModelSpec
   extends WordSpec
@@ -65,6 +66,55 @@ class ModelSpec
         levelBack2 shouldBe level
         levelBack3 shouldBe level
         levelBack4 shouldBe level
+
+        val levelBytesUncompressed = json.getBytes(Charsets.Utf8)
+        val levelBytesCompressed = Zip.compress(levelBytesUncompressed)
+
+        println(s"level-json size(uncompressed): ${levelBytesUncompressed.length}")
+        println(s"level-json size(compressed): ${levelBytesCompressed.length}")
+
+        new String(Zip.decompress(levelBytesCompressed), Charsets.Utf8) shouldBe json
+      }
+
+      "Be copyable" in {
+
+        val l1 = level.duplicate
+
+        val a: Entity = Entity.builder("id1") + Positionable(1,2)
+        val b: Entity = Entity.builder("id2") + Positionable(2,2) + Acting(MovingTo(2,2))
+
+        val l2 = level.duplicate
+
+        val c: Entity = Entity.builder("id3") + Positionable(3,2) + Acting(MovingTo(2,2)) + MovementLimits(1L)
+        val d: Entity = Entity.builder("id4") + Positionable(4,2) + Acting(MovingTo(2,2)) + MovementLimits(1L) + BaseInfo("lala", Team.blue)
+
+        val l3 = level.duplicate
+
+        level.entityStore.allEntities.size shouldBe 4
+        l1.entityStore.allEntities.size shouldBe 0
+        l2.entityStore.allEntities.size shouldBe 2
+        l3.entityStore.allEntities.size shouldBe 4
+
+      }
+
+      "Have some unit arithmetics for testing" in {
+
+        val l1 = level.duplicate
+
+        val a: Entity = Entity.builder("id1") + Positionable(1,2)
+        val b: Entity = Entity.builder("id2") + Positionable(2,2) + Acting(MovingTo(2,2))
+
+        val l2 = level.duplicate
+
+        val c: Entity = Entity.builder("id3") + Positionable(3,2) + Acting(MovingTo(2,2)) + MovementLimits(1L)
+        val d: Entity = Entity.builder("id4") + Positionable(4,2) + Acting(MovingTo(2,2)) + MovementLimits(1L) + BaseInfo("lala", Team.blue)
+
+        val l3 = level.duplicate
+
+        (level.duplicate - c - d) shouldBe l2
+        (level.duplicate - c - d - a - b) shouldBe l1
+        level shouldBe l3
+
 
       }
     }

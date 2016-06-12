@@ -28,4 +28,8 @@ case class PositionCESystem(entries: mutable.Map[Entity, Positionable] = mutable
   def isConflict(component: Positionable, self: Entity): Boolean = !component.positions.forall(isVacant(_, self))
   def isOccupied(pos: Pos, self: Entity = null.asInstanceOf[Entity]): Boolean = entries.filterKeys(_ != self).values.exists(_.contains(pos))
   def isVacant(pos: Pos, self: Entity = null.asInstanceOf[Entity]): Boolean = !isOccupied(pos, self)
+
+  def duplicate: PositionCESystem = {
+    copy(entries = new mutable.HashMap[Entity, Positionable] ++ entries)
+  }
 }

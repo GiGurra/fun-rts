@@ -28,6 +28,7 @@ trait CESystem[T <: Component] {
   def isEmpty: Boolean = size == 0
   def nonEmpty: Boolean = !isEmpty
   def update(dt: Long)(implicit store: CEStore, mesh: Mesh): Unit // Executed every sim iteration
+  def duplicate: CESystem[T]
 }
 
 object CESystem {
@@ -41,6 +42,7 @@ object CESystem {
   */
 case class DefaultCESystem[T <: Component](entries: mutable.Map[Entity, T]) extends CESystem[T] {
   def update(dt: Long)(implicit store: CEStore, mesh: Mesh): Unit = {}
+  def duplicate: DefaultCESystem[T] = copy(new mutable.HashMap[Entity, T] ++ entries)
 }
 
 object DefaultCESystem {

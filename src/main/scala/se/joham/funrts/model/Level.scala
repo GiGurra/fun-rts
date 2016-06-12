@@ -15,6 +15,24 @@ case class Level(mesh: Mesh, entityStore: CEStore) {
   implicit val _aSys = entityStore.system[Acting]
   implicit val _mSys = entityStore.system[MovementLimits]
   implicit val _bSys = entityStore.system[BaseInfo]
+
+  def -=(entity: Entity): Unit = {
+    entityStore -= entity
+  }
+
+  def containsEntity(entity: Entity): Boolean = {
+    entityStore.containsEntity(entity)
+  }
+
+  @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
+  def -(entity: Entity): Level = {
+    copy(mesh.duplicate, entityStore - entity)
+  }
+
+  @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
+  def duplicate: Level = {
+    copy(mesh.duplicate, entityStore.duplicate)
+  }
 }
 
 case class Mesh(nx: Int, ny: Int, tiles: Array[Tile]) {
@@ -48,6 +66,12 @@ case class Mesh(nx: Int, ny: Int, tiles: Array[Tile]) {
   def pos2Index(pos: Pos): Int = {
     (pos.y * nx + pos.x).toInt
   }
+
+  @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
+  def duplicate: Mesh = {
+    copy(tiles = util.Arrays.copyOf(tiles, tiles.length))
+  }
+
 }
 
 object Level {

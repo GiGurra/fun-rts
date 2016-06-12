@@ -1,6 +1,6 @@
 package se.joham.funrts.model
 
-object Cell {
+object Tile {
   type Type = Byte
 
   val TYPE_GROUND  = 0x00 : Byte

@@ -9,6 +9,6 @@ trait LevelGenerator {
 
 object GroundLevelGenerator extends LevelGenerator {
   override def apply(nx: Int, ny: Int, seed: String): Mesh = {
-    Mesh(nx, ny, (0 until nx * ny).map(_ => Cell.TYPE_GROUND).toArray)
+    Mesh(nx, ny, (0 until nx * ny).map(_ => Tile.TYPE_GROUND).toArray)
   }
 }

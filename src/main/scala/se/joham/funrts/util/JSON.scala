@@ -51,7 +51,7 @@ object JSON {
     def toMesh: Mesh = new Mesh(nx, ny, Base64.decodeBinary(base64Tiles))
   }
   object MeshSerialized {
-    def apply(mesh: Mesh): MeshSerialized = new MeshSerialized(mesh.nx, mesh.ny, Base64.encodeString(mesh.cells))
+    def apply(mesh: Mesh): MeshSerialized = new MeshSerialized(mesh.nx, mesh.ny, Base64.encodeString(mesh.tiles))
   }
 
   case class CeSystemSerialized(clsName: String, entries: Map[String, Component]) {

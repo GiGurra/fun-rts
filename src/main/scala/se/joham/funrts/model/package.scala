@@ -12,16 +12,16 @@ package object model {
   type CESystemId = String
   type PlayerId = String
   type Size = Vec2FixPt
-  type Cell = Byte
+  type Tile = Byte
 
-  implicit class RichCell(val cell: Cell) extends AnyVal {
-    def isType(t: Byte)    : Boolean = (cell & Cell.TYPE_BITS) == t
+  implicit class RichTile(val tile: Tile) extends AnyVal {
+    def isType(t: Byte)    : Boolean = (tile & Tile.TYPE_BITS) == t
     def isWalkable         : Boolean = isGround || isBridge
-    def isGround           : Boolean = isType(Cell.TYPE_GROUND)
-    def isBridge           : Boolean = isType(Cell.TYPE_BRIDGE)
-    def isChoppable        : Boolean = isType(Cell.TYPE_TREE)
-    def isChopped          : Boolean = isType(Cell.TYPE_X_TREE)
-    def isWater            : Boolean = isType(Cell.TYPE_WATER)
-    def isCoast            : Boolean = isType(Cell.TYPE_COAST)
+    def isGround           : Boolean = isType(Tile.TYPE_GROUND)
+    def isBridge           : Boolean = isType(Tile.TYPE_BRIDGE)
+    def isChoppable        : Boolean = isType(Tile.TYPE_TREE)
+    def isChopped          : Boolean = isType(Tile.TYPE_X_TREE)
+    def isWater            : Boolean = isType(Tile.TYPE_WATER)
+    def isCoast            : Boolean = isType(Tile.TYPE_COAST)
   }
 }

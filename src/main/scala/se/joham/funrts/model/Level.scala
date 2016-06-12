@@ -28,32 +28,32 @@ case class Level(mesh: Mesh, entityStore: CEStore) {
   def isVacant(pos: Pos, self: Entity = null.asInstanceOf[Entity]): Boolean = !isOccupied(pos, self)
 }
 
-case class Mesh(nx: Int, ny: Int, cells: Array[Cell]) {
+case class Mesh(nx: Int, ny: Int, tiles: Array[Tile]) {
 
   override def equals(other: Any): Boolean = {
     other match {
-      case m: Mesh => (nx == m.nx) && (ny == m.ny) && util.Arrays.equals(cells, m.cells)
+      case m: Mesh => (nx == m.nx) && (ny == m.ny) && util.Arrays.equals(tiles, m.tiles)
       case _ => false
     }
   }
 
   val size: Size = Vec2FixPt(nx, ny)
 
-  def update(pos: Pos, cell: Cell): Unit = {
+  def update(pos: Pos, tile: Tile): Unit = {
     require(pos.x < size.x, s"Position $pos out of level bounds $size")
     require(pos.x >= 0, s"Position $pos out of level bounds $size")
     require(pos.y < size.y, s"Position $pos out of level bounds $size")
     require(pos.y >= 0, s"Position $pos out of level bounds $size")
-    cells(pos2Index(pos)) = cell
+    tiles(pos2Index(pos)) = tile
   }
 
 
-  def apply(pos: Pos): Cell = {
+  def apply(pos: Pos): Tile = {
     require(pos.x < size.x, s"Position $pos out of level bounds $size")
     require(pos.x >= 0, s"Position $pos out of level bounds $size")
     require(pos.y < size.y, s"Position $pos out of level bounds $size")
     require(pos.y >= 0, s"Position $pos out of level bounds $size")
-    cells(pos2Index(pos))
+    tiles(pos2Index(pos))
   }
 
   def pos2Index(pos: Pos): Int = {

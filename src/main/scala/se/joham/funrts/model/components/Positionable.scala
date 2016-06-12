@@ -10,7 +10,7 @@ import scala.language.implicitConversions
   */
 case class Positionable(pos: Pos,
                         size: Size = Vec2FixPt(1,1),
-                        acceptedTiles: Set[Byte] = Set(Cell.TYPE_GROUND, Cell.TYPE_BRIDGE)) extends Component {
+                        acceptedTiles: Set[Byte] = Set(Tile.TYPE_GROUND, Tile.TYPE_BRIDGE)) extends Component {
 
   lazy val positions: Set[Pos] = (for {
     x <- 0 until size.x.toInt
@@ -28,5 +28,5 @@ object Positionable {
   implicit val sysFactory = CESystemFactory.default[Positionable]
   def apply(x: Long, y: Long): Positionable = Positionable(Vec2FixPt(x,y), Vec2FixPt(1,1))
   def apply(x: Long, y: Long, size: Size): Positionable = Positionable(Vec2FixPt(x,y), size)
-  def apply(x: Long, y: Long, size: Size, acceptedTiles: Set[Cell.Type]): Positionable = Positionable(Vec2FixPt(x,y), size, acceptedTiles)
+  def apply(x: Long, y: Long, size: Size, acceptedTiles: Set[Tile.Type]): Positionable = Positionable(Vec2FixPt(x,y), size, acceptedTiles)
 }

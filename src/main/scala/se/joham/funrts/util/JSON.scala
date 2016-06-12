@@ -54,6 +54,6 @@ object JSON {
     ShortTypeHints(Action.classes) +
     ShortTypeHints(Team.classes)
 
-  implicit val formats = org.json4s.DefaultFormats + EntitySerializer + EntitySerializer + CESToreSerializer + CESystemSerializer + jsonTypeHints
+  implicit val formats = org.json4s.DefaultFormats + EntitySerializer + CESToreSerializer + CESystemSerializer + jsonTypeHints
 
 }

@@ -7,6 +7,7 @@ import org.scalatest.mock._
 import se.joham.funrts.math.Vec2FixPt
 import se.joham.funrts.model.v2.components.{Acting, MovementLimits, Positionable}
 import se.joham.funrts.model.{GroundLevelGenerator, Level, MovingTo}
+import se.joham.funrts.util.JSON
 
 class CEStoreSpec
   extends WordSpec
@@ -24,11 +25,11 @@ class CEStoreSpec
     "automatically add systems on demand" in {
 
       val store = CEStore()
-      store shouldBe empty
+      store.isEmpty shouldBe true
 
       val posSystem = store.system[Positionable]
-      store should not be empty
-      posSystem shouldBe empty
+      store.isEmpty shouldBe false
+      posSystem.isEmpty shouldBe true
 
       store.system[Positionable] shouldBe posSystem
       store.size shouldBe 1
@@ -86,21 +87,22 @@ class CEStoreSpec
     }
 
     "Write a CEStore as JSOn" in {
+
       implicit val store = CEStore()
+
+      val json = JSON.write(store, pretty = true)
+
+      println(json)
+/*
+      val storeBack = JSON.read[CEStore](json)
+
       implicit val pSystem = store.system[Positionable]
       implicit val aSystem = store.system[Acting]
 
-      object EntitySerializer extends CustomKeySerializer[Entity](_ => ({ case id => Entity(id) },{ case x: Entity => x.id } ))
-
       val a: Entity = Entity.builder("id1")
       val b: Entity = Entity.builder("id2") + Positionable(1,2)
-      val c: Entity = Entity.builder("id3") + Positionable(1,2) + Acting(MovingTo(2,2))
+      val c: Entity = Entity.builder("id3") + Positionable(1,2) + Acting(MovingTo(2,2))*/
 
-      implicit val formats = org.json4s.DefaultFormats + EntitySerializer
-      import org.json4s.jackson.JsonMethods._
-
-      val storeJson = pretty(Extraction.decompose(store)(formats))
-      println(storeJson)
     }
 
   }

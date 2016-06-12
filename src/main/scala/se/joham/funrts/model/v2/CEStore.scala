@@ -7,7 +7,7 @@ import scala.language.implicitConversions
 /**
   * Created by johan on 2016-06-11.
   */
-case class CEStore(systems: mutable.Map[Id, CESystem[_ <: Component]] = new mutable.HashMap[Id, CESystem[_ <: Component]]) extends mutable.Map[Id, CESystem[_ <: Component]] {
+case class CEStore(systems: mutable.Map[Id, CESystem[Component]] = new mutable.HashMap[Id, CESystem[Component]]) {
 
   def system[T <: Component : ComponentTypeIdentifier]: CESystem[T] = {
     systemOf(implicitly[ComponentTypeIdentifier[T]]).asInstanceOf[CESystem[T]]
@@ -39,13 +39,18 @@ case class CEStore(systems: mutable.Map[Id, CESystem[_ <: Component]] = new muta
     }
   }
 
-  override def get(key: Id): Option[CESystem[_ <: Component]] = systems.get(key)
-  override def iterator: Iterator[(Id, CESystem[_ <: Component])] = systems.iterator
-  override def put(k: Id, v: CESystem[_ <: Component]): Option[CESystem[_ <: Component]] = systems.put(k, v)
-  override def +=(kv: (Id, CESystem[_ <: Component])): this.type = { systems += kv; this }
-  override def -=(key: Id): this.type = { systems -= key; this }
+  private[v2] def systemOf(typeIdentifier: ComponentTypeIdentifier[Component]): CESystem[Component] = {
+    systems.getOrElseUpdate(typeIdentifier.typeId, CESystem[Component]())
+  }
+}
 
-  private[v2] def systemOf(typeIdentifier: ComponentTypeIdentifier[_ <: Component]): CESystem[Component] = {
-    systems.getOrElseUpdate(typeIdentifier.typeId, CESystem[Component]()).asInstanceOf[CESystem[Component]]
+object CEStore {
+  implicit def store2map(store: CEStore): mutable.Map[Id, CESystem[Component]] = new mutable.Map[Id, CESystem[Component]] {
+    val systems = store.systems
+    override def get(key: Id): Option[CESystem[Component]] = systems.get(key)
+    override def iterator: Iterator[(Id, CESystem[Component])] = systems.iterator
+    override def put(k: Id, v: CESystem[Component]): Option[CESystem[Component]] = systems.put(k, v)
+    override def +=(kv: (Id, CESystem[Component])): this.type = { systems += kv; this }
+    override def -=(key: Id): this.type = { systems -= key; this }
   }
 }

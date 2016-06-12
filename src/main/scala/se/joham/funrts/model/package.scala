@@ -9,7 +9,7 @@ package object model {
   type Pos = Vec2FixPt
   type EntityId = String
   type CombatantId = String
-  type ComponentSystemId = String
+  type CESystemId = String
   type PlayerId = String
   type Size = Vec2FixPt
   type Cell = Byte

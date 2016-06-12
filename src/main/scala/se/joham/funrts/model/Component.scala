@@ -7,11 +7,11 @@ import scala.reflect.ClassTag
 /**
   * Created by johan on 2016-06-12.
   */
-trait Component { def typeIdentifier: ComponentTypeIdentifier[_ <: Component] }
-case class ComponentTypeIdentifier[+T <: Component](typeId: ComponentSystemId)
-object ComponentTypeIdentifier {
-  def apply[T <: Component : ClassTag]: ComponentTypeIdentifier[T] = {
-    new ComponentTypeIdentifier(implicitly[ClassTag[T]].runtimeClass.getSimpleName)
+trait Component { def typeIdentifier: ComponentType[_ <: Component] }
+case class ComponentType[+T <: Component](typeId: CESystemId)
+object ComponentType {
+  def apply[T <: Component : ClassTag]: ComponentType[T] = {
+    new ComponentType(implicitly[ClassTag[T]].runtimeClass.getSimpleName)
   }
 }
 

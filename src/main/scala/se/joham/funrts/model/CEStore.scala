@@ -6,10 +6,10 @@ import scala.language.implicitConversions
 /**
   * Created by johan on 2016-06-11.
   */
-case class CEStore(systems: mutable.Map[ComponentSystemId, CESystem[Component]] = new mutable.HashMap[ComponentSystemId, CESystem[Component]]) {
+case class CEStore(systems: mutable.Map[CESystemId, CESystem[Component]] = new mutable.HashMap[CESystemId, CESystem[Component]]) {
 
-  def system[T <: Component : ComponentTypeIdentifier]: CESystem[T] = {
-    systemOf(implicitly[ComponentTypeIdentifier[T]]).asInstanceOf[CESystem[T]]
+  def system[T <: Component : ComponentType]: CESystem[T] = {
+    systemOf(implicitly[ComponentType[T]]).asInstanceOf[CESystem[T]]
   }
 
   def allEntities: Set[Entity] = {
@@ -38,15 +38,15 @@ case class CEStore(systems: mutable.Map[ComponentSystemId, CESystem[Component]] 
     }
   }
 
-  private def systemOf(typeIdentifier: ComponentTypeIdentifier[Component]): CESystem[Component] = {
+  private def systemOf(typeIdentifier: ComponentType[Component]): CESystem[Component] = {
     systems.getOrElseUpdate(typeIdentifier.typeId, CESystem[Component]())
   }
 }
 
 object CEStore {
-  def apply(systems: Map[ComponentSystemId, CESystem[Component]]): CEStore = {
-    new CEStore(new mutable.HashMap[ComponentSystemId, CESystem[Component]] ++ systems)
+  def apply(systems: Map[CESystemId, CESystem[Component]]): CEStore = {
+    new CEStore(new mutable.HashMap[CESystemId, CESystem[Component]] ++ systems)
   }
 
-  implicit def store2map(store: CEStore): mutable.Map[ComponentSystemId, CESystem[Component]] = store.systems
+  implicit def store2map(store: CEStore): mutable.Map[CESystemId, CESystem[Component]] = store.systems
 }

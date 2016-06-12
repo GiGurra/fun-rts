@@ -19,12 +19,12 @@ case class Positionable(pos: Pos,
     Vec2FixPt(x,y) + pos
   }).toSet
 
-  def typeIdentifier: ComponentTypeIdentifier[Positionable] = Positionable.typ
+  def typeIdentifier: ComponentType[Positionable] = Positionable.typ
 }
 
 object Positionable {
   implicit def p2positions(p: Positionable): Set[Pos] = p.positions
-  implicit val typ = ComponentTypeIdentifier[Positionable]
+  implicit val typ = ComponentType[Positionable]
   def apply(x: Long, y: Long): Positionable = Positionable(Vec2FixPt(x,y), Vec2FixPt(1,1))
   def apply(x: Long, y: Long, size: Size): Positionable = Positionable(Vec2FixPt(x,y), size)
   def apply(x: Long, y: Long, size: Size, acceptedTiles: Set[Cell.Type]): Positionable = Positionable(Vec2FixPt(x,y), size, acceptedTiles)

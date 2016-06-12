@@ -33,7 +33,7 @@ object JSON {
       ShortTypeHints(Team.classes)
 
   object CESToreSerializer extends CustomSerializer[CEStore](_ => ({
-    case json => CEStore(extract[Map[ComponentSystemId, CESystem[Component]]](json)) },{
+    case json => CEStore(extract[Map[CESystemId, CESystem[Component]]](json)) },{
     case store: CEStore => decompose(store.systems)
   }))
 

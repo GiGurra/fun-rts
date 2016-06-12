@@ -85,10 +85,17 @@ class ModelSpec
         val json = JSON.write(level, pretty = false)
         println(json)
 
-        val levelBack = JSON.read[Level](json)
-        println(JSON.write(levelBack, pretty = false))
+        val levelBack1 = JSON.read[Level](json)
+        val levelBack2 = JSON.read[Level](json)
+        val levelBack3 = JSON.read[Level](json)
+        val levelBack4 = JSON.read[Level](json)
 
-        levelBack shouldBe level
+        println(JSON.write(levelBack1, pretty = false))
+
+        levelBack1 shouldBe level
+        levelBack2 shouldBe level
+        levelBack3 shouldBe level
+        levelBack4 shouldBe level
 
       }
     }

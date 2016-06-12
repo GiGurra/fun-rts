@@ -56,13 +56,19 @@ object JSON {
 
   case class CeSystemSerialized(clsName: String, entries: Map[String, Component]) {
     def toCeSystem: CESystem[Component] = {
-      val cls = Class.forName(clsName)
-      val arg = new mutable.HashMap[EntityId, Component] ++ entries.map(p => Entity(p._1) -> p._2)
-      val ctor = cls.getConstructor(classOf[mutable.Map[_,_]])
-      ctor.newInstance(arg).asInstanceOf[CESystem[Component]]
+      CeSystemSerialized.getCtor(clsName)(new mutable.HashMap[EntityId, Component] ++ entries.map(p => Entity(p._1) -> p._2))
     }
   }
   object CeSystemSerialized {
+    private val ctors = new scala.collection.concurrent.TrieMap[String, mutable.Map[_,_] => CESystem[Component]]
+    private def getCtor(clsName: String): mutable.Map[_,_] => CESystem[Component] = {
+      ctors.getOrElseUpdate(clsName, {
+        val cls = Class.forName(clsName)
+        val ctor = cls.getConstructor(classOf[mutable.Map[_,_]])
+        input => ctor.newInstance(input).asInstanceOf[CESystem[Component]]
+      })
+    }
+
     def apply[T <: Component](system: CESystem[T]): CeSystemSerialized = {
       CeSystemSerialized(system.getClass.getName, system.entries.map(p => p._1.id -> p._2).toMap)
     }

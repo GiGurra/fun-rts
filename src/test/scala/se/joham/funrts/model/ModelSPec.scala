@@ -1,13 +1,7 @@
 package se.joham.funrts.model
 
-import java.util.UUID
-
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
-import scala.util.{Failure, Success, Try}
 import org.scalatest._
 import org.scalatest.mock._
-import se.gigurra.franklin.Collection._
 import se.joham.funrts.math.Vec2FixPt
 import se.joham.funrts.model.components.{Acting, BaseInfo, MovementLimits, Positionable}
 import se.joham.funrts.util.JSON
@@ -23,12 +17,13 @@ class ModelSpec
   val levelGen = GroundLevelGenerator
   val level = Level(10, 10, seed = "test", levelGen)
   val store = level.entityStore
+  import level._
 
-  def makeBuilding(id: EntityId, name: String, pos: Pos, team: Team, size: Size = Vec2FixPt(2,2))(implicit store: CEStore): Entity = {
+  def makeBuilding(id: EntityId, name: String, pos: Pos, team: Team, size: Size = Vec2FixPt(2,2)): Entity = {
     Entity.builder(id) + Positionable(pos, size) + BaseInfo(name, team)
   }
 
-  def makeCharacter(id: EntityId, name: String, pos: Pos, team: Team)(implicit store: CEStore): Entity = {
+  def makeCharacter(id: EntityId, name: String, pos: Pos, team: Team): Entity = {
     Entity.builder(id) + Positionable(pos) + MovementLimits(2L) + BaseInfo(name, team)
   }
 
@@ -36,8 +31,6 @@ class ModelSpec
 
     "Level" should {
       "be able to add and get entities of different types from a Level" in {
-
-        import level._
 
         store.allEntities.size shouldBe 0
 
@@ -51,7 +44,6 @@ class ModelSpec
       }
 
       "Not overlap positions between buildings and characters" in {
-        import level._
 
         val building = makeBuilding(id = "building", name = "farm", pos = Vec2FixPt(1,1), size = Vec2FixPt(2,2), team = Team.blue)
 
@@ -73,8 +65,6 @@ class ModelSpec
 
 
       "Be written to JSON and read back" in {
-
-        import level._
 
         val a: Entity = Entity.builder("id1")
         val b: Entity = Entity.builder("id2") + Positionable(1,2)

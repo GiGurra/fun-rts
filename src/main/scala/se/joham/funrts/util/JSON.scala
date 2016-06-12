@@ -29,7 +29,7 @@ object JSON {
 
   object CESToreSerializer extends CustomSerializer[CEStore](_ => ({
     case json => CEStore(extract[Map[CESystemId, CESystem[Component]]](json)) },{
-    case store: CEStore => decompose(store.systems)
+    case store: DefaultCEStore => decompose(store.systems)
   }))
 
   object CESystemSerializer extends CustomSerializer[CESystem[Component]](_ => ({

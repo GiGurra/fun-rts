@@ -5,12 +5,11 @@ import java.util
 import se.joham.funrts.math.Vec2FixPt
 import se.joham.funrts.model.components.{Acting, BaseInfo, MovementLimits, Positionable}
 
-import scala.collection.mutable
-
 /**
   * Created by johan on 2016-06-11.
   */
 case class Level(mesh: Mesh, entityStore: CEStore) {
+  implicit val _mesh = mesh
   implicit val _stor = entityStore
   implicit val _pSys = entityStore.system[Positionable]
   implicit val _aSys = entityStore.system[Acting]
@@ -19,8 +18,8 @@ case class Level(mesh: Mesh, entityStore: CEStore) {
 
   def size: Size = mesh.size
 
-  def components[T <: Component : ComponentType]: mutable.Map[Entity, T] = {
-    entityStore.system[T].entries
+  def components[T <: Component : ComponentType]: scala.collection.Map[Entity, T] = {
+    entityStore.system[T]
   }
 
   def isConflict(pos: Positionable, self: Entity): Boolean = !pos.forall(isVacant(_, self))

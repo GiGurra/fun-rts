@@ -16,36 +16,17 @@ class CEStoreSpec
 
   val levelGen = GroundLevelGenerator
   val level = Level(10, 10, seed = "test", levelGen)
+  val store = level.entityStore
+  import level._
 
   "CEStore" should {
 
-    "automatically add systems on demand" in {
-
-      val store = CEStore()
-      store.isEmpty shouldBe true
-
-      val posSystem = store.system[Positionable]
-      store.isEmpty shouldBe false
-      posSystem.isEmpty shouldBe true
-
-      store.system[Positionable] shouldBe posSystem
-      store.size shouldBe 1
-
-      val moveLimitsSystem = store.system[MovementLimits]
-      store.size shouldBe 2
-
-    }
-
     "create an entity with components" in {
-      implicit val store = CEStore()
-      val entity = Entity("id")
+      val entity = Entity("my-entity-id")
       val p = Positionable(1,2)
       val a = Acting(MovingTo(2,2))
       entity += p
       entity += a
-
-      implicit val pSystem = store.system[Positionable]
-      implicit val aSystem = store.system[Acting]
 
       store.system[Positionable].size shouldBe 1
       store.system[Positionable].apply(entity) shouldBe p
@@ -67,9 +48,6 @@ class CEStoreSpec
     }
 
     "create an entity using a Builder" in {
-      implicit val store = CEStore()
-      implicit val pSystem = store.system[Positionable]
-      implicit val aSystem = store.system[Acting]
 
       val a: Entity = Entity.builder("id1")
       val b: Entity = Entity.builder("id2") + Positionable(1,2)
@@ -84,13 +62,6 @@ class CEStoreSpec
     }
 
     "Write a CEStore as JSOn and read it back" in {
-
-      implicit val store = CEStore()
-
-      implicit val pSystem = store.system[Positionable]
-      implicit val aSystem = store.system[Acting]
-      implicit val mSystem = store.system[MovementLimits]
-      implicit val bSystem = store.system[BaseInfo]
 
       val a: Entity = Entity.builder("id1")
       val b: Entity = Entity.builder("id2") + Positionable(1,2)

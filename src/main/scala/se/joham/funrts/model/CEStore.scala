@@ -21,15 +21,6 @@ case class CEStore(systems: mutable.Map[CESystemId, CESystem[Component]] = new m
     systems.values.foreach(_ -= entity)
   }
 
-  def copy(from: Entity, to: Entity): Unit = {
-    for {
-      system <- systems.values
-      component <- system.get(from)
-    } {
-      system.put(to, component)
-    }
-  }
-
   def componentsOf(entity: Entity): Iterable[Component] = {
     for {
       system <- systems.values

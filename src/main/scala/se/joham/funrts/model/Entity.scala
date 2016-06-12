@@ -1,13 +1,15 @@
 package se.joham.funrts.model
 
+import se.joham.funrts.util.JSON
+
 import scala.language.implicitConversions
 
 /**
   * Created by johan on 2016-06-12.
   */
 case class Entity(id: EntityId) extends AnyVal {
-  def +=[T <: Component: ComponentType](component: T)(implicit store: CEStore): Entity = {
-    store.system[T].entries.put(this, component)
+  def +=[T <: Component: ComponentType](component: T)(implicit store: CEStore, mesh: Mesh): Entity = {
+    store.system[T].put(this, component)
     this
   }
   def get[T <: Component: ComponentType](implicit system: CESystem[T]): Option[T] = system.get(this)
@@ -18,17 +20,17 @@ case class Entity(id: EntityId) extends AnyVal {
 
   def info(implicit store: CEStore): String = {
     val buffer = new StringBuffer()
-    buffer.append(s"Entity: $id\n")
+    buffer.append(s"Entity ($id) components:\n")
     for (component <- components) {
-      buffer.append(s"  ${component.typeIdentifier.typeId}: $component")
+      buffer.append(s"  ${JSON.write(component, pretty = false)}")
     }
     buffer.toString
   }
 }
 object Entity {
-  def builder(id: EntityId)(implicit store: CEStore): Builder = new Builder(Entity(id))
+  def builder(id: EntityId)(implicit store: CEStore, mesh: Mesh): Builder = new Builder(Entity(id))
 
-  case class Builder(entity: Entity)(implicit store: CEStore) {
+  case class Builder(entity: Entity)(implicit store: CEStore, mesh: Mesh) {
     def +[T <: Component: ComponentType](component: T): Builder = {
       entity += component
       this

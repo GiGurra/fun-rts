@@ -17,16 +17,22 @@ object CESystemFactory {
 }
 
 trait CESystem[T <: Component] {
-  def entries: mutable.Map[Entity, T]
+  protected def entries: mutable.Map[Entity, T]
   def apply(entity: Entity): T = entries.apply(entity)
   def get(entity: Entity): Option[T] = entries.get(entity)
   def -=(entity: Entity): Unit = entries -= entity
   def values: Iterable[T] = entries.values
   def keys: Iterable[Entity] = entries.keys
-  def put(k: Entity, v: T): Unit = entries.put(k,v)
+  def put(entity: Entity, component: T)(implicit store: CEStore, mesh: Mesh): Unit = entries.put(entity, component)
   def size: Int = entries.size
   def isEmpty: Boolean = size == 0
   def nonEmpty: Boolean = !isEmpty
+}
+
+object CESystem {
+  implicit def sys2Map[T <: Component](sys: CESystem[T]): scala.collection.Map[Entity, T] = {
+    sys.entries
+  }
 }
 
 /**

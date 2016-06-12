@@ -70,7 +70,7 @@ object JSON {
     }
 
     def apply[T <: Component](system: CESystem[T]): CeSystemSerialized = {
-      CeSystemSerialized(system.getClass.getName, system.entries.map(p => p._1.id -> p._2).toMap)
+      CeSystemSerialized(system.getClass.getName, system.map(p => p._1.id -> p._2).toMap)
     }
   }
 

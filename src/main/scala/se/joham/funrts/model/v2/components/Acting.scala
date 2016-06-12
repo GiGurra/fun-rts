@@ -11,7 +11,5 @@ case class Acting(action: Action) extends Component {
 }
 
 object Acting {
-  implicit val typ = new ComponentTypeIdentifier[Acting] {
-    override val typeId: ComponentSystemId = "Acting"
-  }
+  implicit val typ = ComponentTypeIdentifier[Acting]
 }

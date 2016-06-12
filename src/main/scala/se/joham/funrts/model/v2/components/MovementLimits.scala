@@ -1,6 +1,5 @@
 package se.joham.funrts.model.v2.components
 
-import se.joham.funrts.model._
 import se.joham.funrts.model.v2.{Component, ComponentTypeIdentifier}
 
 /**
@@ -11,7 +10,5 @@ case class MovementLimits(topSpeed: Long) extends Component {
 }
 
 object MovementLimits {
-  implicit val typ = new ComponentTypeIdentifier[MovementLimits] {
-    override val typeId: ComponentSystemId = "MovementLimits"
-  }
+  implicit val typ = ComponentTypeIdentifier[MovementLimits]
 }

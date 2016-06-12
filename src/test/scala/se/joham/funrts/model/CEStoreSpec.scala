@@ -51,23 +51,28 @@ class CEStoreSpec
 
       val a: Entity = Entity.builder("id1")
       val b: Entity = Entity.builder("id2") + Positionable(1,2)
-      val c: Entity = Entity.builder("id3") + Positionable(1,2) + Acting(MovingTo(2,2))
+      val c: Entity = Entity.builder("id3") + Positionable(2,2) + Acting(MovingTo(2,2))
 
       a.components.toSet shouldBe Set()
       b.components.toSet shouldBe Set(Positionable(1,2))
-      c.components.toSet shouldBe Set(Positionable(1,2), Acting(MovingTo(2,2)))
+      c.components.toSet shouldBe Set(Positionable(2,2), Acting(MovingTo(2,2)))
 
       b[Positionable].pos shouldBe Vec2FixPt(1,2)
       c[Acting].action shouldBe MovingTo(2,2)
+    }
+
+    "fail to place two entities in the same position" in {
+      Entity.builder("id2") + Positionable(1,2)
+      a[IllegalArgumentException] should be thrownBy (Entity.builder("id3") + Positionable(1,2))
     }
 
     "Write a CEStore as JSOn and read it back" in {
 
       val a: Entity = Entity.builder("id1")
       val b: Entity = Entity.builder("id2") + Positionable(1,2)
-      val c: Entity = Entity.builder("id3") + Positionable(1,2) + Acting(MovingTo(2,2))
-      val d: Entity = Entity.builder("id4") + Positionable(1,2) + Acting(MovingTo(2,2)) + MovementLimits(1L)
-      val e: Entity = Entity.builder("id5") + Positionable(1,2) + Acting(MovingTo(2,2)) + MovementLimits(1L) + BaseInfo("lala", Team.blue)
+      val c: Entity = Entity.builder("id3") + Positionable(2,2) + Acting(MovingTo(2,2))
+      val d: Entity = Entity.builder("id4") + Positionable(3,2) + Acting(MovingTo(2,2)) + MovementLimits(1L)
+      val e: Entity = Entity.builder("id5") + Positionable(4,2) + Acting(MovingTo(2,2)) + MovementLimits(1L) + BaseInfo("lala", Team.blue)
 
       val json = JSON.write(store, pretty = false)
       println(json)

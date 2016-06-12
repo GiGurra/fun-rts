@@ -15,16 +15,6 @@ case class Level(mesh: Mesh, entityStore: CEStore) {
   implicit val _aSys = entityStore.system[Acting]
   implicit val _mSys = entityStore.system[MovementLimits]
   implicit val _bSys = entityStore.system[BaseInfo]
-
-  def size: Size = mesh.size
-
-  def components[T <: Component : ComponentType]: scala.collection.Map[Entity, T] = {
-    entityStore.system[T]
-  }
-
-  def isConflict(pos: Positionable, self: Entity): Boolean = !pos.forall(isVacant(_, self))
-  def isOccupied(pos: Pos, self: Entity = null.asInstanceOf[Entity]): Boolean = components[Positionable].filterKeys(_ != self).values.exists(_.contains(pos))
-  def isVacant(pos: Pos, self: Entity = null.asInstanceOf[Entity]): Boolean = !isOccupied(pos, self)
 }
 
 case class Mesh(nx: Int, ny: Int, tiles: Array[Tile]) {

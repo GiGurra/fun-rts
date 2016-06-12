@@ -14,22 +14,23 @@ case class GameSimulation(level: Level,
 
   def update(aggregatedCommands: AggregatedCommands): Unit = {
     validateInputs(aggregatedCommands)
-    applyCommands(aggregatedCommands.playerCommands.values.flatten)
+    applyCommands(aggregatedCommands)
     runSimulationStep()
     iStep += 1
   }
 
   private def runSimulationStep(): Unit = {
-    for ((systemId, system) <- entityStore.systems) {
+    for ((_, system) <- entityStore.systems) {
       system.update(dt)
     }
   }
 
-  private def applyCommands(commands: Iterable[Command]): Unit = {
+  private def applyCommands(aggregatedCommands: AggregatedCommands): Unit = {
     for {
-      command <- commands
-      entity = Entity(command.entityId)
-      actor  <- entity.get[Acting]
+      (playerId, commands) <- aggregatedCommands
+      command              <- commands
+      entity                = Entity(command.entityId)
+      actor                <- entity.get[Acting]
     } {
       entityStore.system[Acting].put(entity, actor.copy(action = command.action))
     }

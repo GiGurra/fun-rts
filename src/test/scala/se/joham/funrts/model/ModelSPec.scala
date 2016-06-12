@@ -43,34 +43,13 @@ class ModelSpec
         c[MovementLimits] shouldBe MovementLimits(2)
       }
 
-      "Not overlap positions between buildings and characters" in {
-
-        val building = makeBuilding(id = "building", name = "farm", pos = Vec2FixPt(1,1), size = Vec2FixPt(2,2), team = Team.blue)
-
-        // throw if conflicting position
-        // a[RuntimeException] should be thrownBy makeCharacter(id = "character", name = "footman", pos = Vec2FixPt(2,2), team = Team.blue)
-
-        level.isOccupied(Vec2FixPt(1,1)) shouldBe true
-        level.isOccupied(Vec2FixPt(1,2)) shouldBe true
-        level.isOccupied(Vec2FixPt(2,1)) shouldBe true
-        level.isOccupied(Vec2FixPt(2,2)) shouldBe true
-        level.isOccupied(Vec2FixPt(3,2)) shouldBe false
-
-        level.isVacant(Vec2FixPt(1,1)) shouldBe false
-        level.isVacant(Vec2FixPt(1,2)) shouldBe false
-        level.isVacant(Vec2FixPt(2,1)) shouldBe false
-        level.isVacant(Vec2FixPt(2,2)) shouldBe false
-        level.isVacant(Vec2FixPt(3,2)) shouldBe true
-      }
-
-
       "Be written to JSON and read back" in {
 
         val a: Entity = Entity.builder("id1")
         val b: Entity = Entity.builder("id2") + Positionable(1,2)
-        val c: Entity = Entity.builder("id3") + Positionable(1,2) + Acting(MovingTo(2,2))
-        val d: Entity = Entity.builder("id4") + Positionable(1,2) + Acting(MovingTo(2,2)) + MovementLimits(1L)
-        val e: Entity = Entity.builder("id5") + Positionable(1,2) + Acting(MovingTo(2,2)) + MovementLimits(1L) + BaseInfo("lala", Team.blue)
+        val c: Entity = Entity.builder("id3") + Positionable(2,2) + Acting(MovingTo(2,2))
+        val d: Entity = Entity.builder("id4") + Positionable(3,2) + Acting(MovingTo(2,2)) + MovementLimits(1L)
+        val e: Entity = Entity.builder("id5") + Positionable(4,2) + Acting(MovingTo(2,2)) + MovementLimits(1L) + BaseInfo("lala", Team.blue)
 
         val json = JSON.write(level, pretty = false)
         println(json)

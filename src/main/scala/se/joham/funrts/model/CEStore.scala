@@ -9,7 +9,8 @@ import scala.language.implicitConversions
 case class CEStore(systems: mutable.Map[CESystemId, CESystem[Component]] = new mutable.HashMap[CESystemId, CESystem[Component]]) {
 
   def system[T <: Component : ComponentType : CESystemFactory]: CESystem[T] = {
-    systemOf(implicitly[ComponentType[T]]).asInstanceOf[CESystem[T]]
+    val id = implicitly[ComponentType[T]].typeId
+    systems.getOrElseUpdate(id, implicitly[CESystemFactory[T]].apply().asInstanceOf[CESystem[Component]]).asInstanceOf[CESystem[T]]
   }
 
   def allEntities: Set[Entity] = {
@@ -36,10 +37,6 @@ case class CEStore(systems: mutable.Map[CESystemId, CESystem[Component]] = new m
     } yield {
       component
     }
-  }
-
-  private def systemOf(typeIdentifier: ComponentType[Component]): CESystem[Component] = {
-    systems.getOrElseUpdate(typeIdentifier.typeId, CESystem[Component]())
   }
 }
 

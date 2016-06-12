@@ -12,14 +12,12 @@ object CESystemFactory {
     override def apply(): CESystem[T] = f()
   }
   def default[T <: Component]: CESystemFactory[T] = new CESystemFactory[T] {
-    override def apply(): CESystem[T] = CESystem[T]()
+    override def apply(): CESystem[T] = DefaultCESystem[T]()
   }
 }
 
-/**
-  * Created by johan on 2016-06-12.
-  */
-case class CESystem[T <: Component](entries: mutable.Map[Entity, T]) {
+trait CESystem[T <: Component] {
+  def entries: mutable.Map[Entity, T]
   def apply(entity: Entity): T = entries.apply(entity)
   def get(entity: Entity): Option[T] = entries.get(entity)
   def -=(entity: Entity): Unit = entries -= entity
@@ -31,7 +29,13 @@ case class CESystem[T <: Component](entries: mutable.Map[Entity, T]) {
   def nonEmpty: Boolean = !isEmpty
 }
 
-object CESystem {
-  def apply[T <: Component](entries: Map[EntityId, T]): CESystem[T] = new CESystem[T](new mutable.HashMap[Entity, T] ++ entries.map(p => Entity(p._1) -> p._2))
+/**
+  * Created by johan on 2016-06-12.
+  */
+case class DefaultCESystem[T <: Component](entries: mutable.Map[Entity, T]) extends CESystem[T] {
+}
+
+object DefaultCESystem {
+  def apply[T <: Component](entries: Map[EntityId, T]): CESystem[T] = new DefaultCESystem[T](new mutable.HashMap[Entity, T] ++ entries.map(p => Entity(p._1) -> p._2))
   def apply[T <: Component](): CESystem[T] = apply[T](Map.empty[EntityId, T])
 }

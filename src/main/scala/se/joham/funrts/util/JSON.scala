@@ -3,9 +3,11 @@ package se.joham.funrts.util
 import org.json4s.JsonAST.JString
 import org.json4s.{CustomSerializer, Extraction, ShortTypeHints}
 import se.joham.funrts.model._
-import org.json4s.jackson.JsonMethods.{parse, compact}
+import org.json4s.jackson.JsonMethods.{compact, parse}
 import org.json4s.jackson.JsonMethods.{pretty => prty}
-import Extraction.{extract, decompose}
+import Extraction.{decompose, extract}
+
+import scala.collection.mutable
 
 /**
   * Created by johan on 2016-06-12.
@@ -38,8 +40,8 @@ object JSON {
   }))
 
   object CESystemSerializer extends CustomSerializer[CESystem[Component]](_ => ({
-    case json => CESystem(extract[Map[EntityId, Component]](json)) },{
-    case system: CESystem[_] => decompose(system.entries.map(p => p._1.id -> p._2))
+    case json => extract[CeSystemSerialized](json).toCeSystem },{
+    case system: CESystem[_] => decompose(CeSystemSerialized(system))
   }))
 
   object EntitySerializer extends CustomSerializer[Entity](_ => ({
@@ -47,4 +49,17 @@ object JSON {
     case x: Entity => JString(x.id)
   }))
 
+  case class CeSystemSerialized(clsName: String, entries: Map[String, Component]) {
+    def toCeSystem: CESystem[Component] = {
+      val cls = Class.forName(clsName)
+      val arg = new mutable.HashMap[EntityId, Component] ++ entries.map(p => Entity(p._1) -> p._2)
+      val ctor = cls.getConstructor(classOf[mutable.Map[_,_]])
+      ctor.newInstance(arg).asInstanceOf[CESystem[Component]]
+    }
+  }
+  object CeSystemSerialized {
+    def apply[T <: Component](system: CESystem[T]): CeSystemSerialized = {
+      CeSystemSerialized(system.getClass.getName, system.entries.map(p => p._1.id -> p._2).toMap)
+    }
+  }
 }

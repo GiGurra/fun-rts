@@ -1,6 +1,7 @@
 package se.joham.funrts.model
 
 import se.gigurra.serviceutils.twitter.logging.Logging
+import se.joham.funrts.model.components.{Acting, BaseInfo}
 
 /**
   * Created by johan on 2016-06-11.
@@ -9,6 +10,7 @@ case class GameSimulation(level: Level,
                           players: Set[Player],
                           dt: Long,
                           var iStep: Long) extends Logging {
+  import level._
 
   def update(aggregatedCommands: AggregatedCommands): Unit = {
     validateInputs(aggregatedCommands)
@@ -18,20 +20,19 @@ case class GameSimulation(level: Level,
   }
 
   private def runSimulationStep(): Unit = {
-    ???
+    for ((systemId, system) <- entityStore.systems) {
+      system.update(dt)
+    }
   }
 
   private def applyCommands(commands: Iterable[Command]): Unit = {
-    /*
     for {
       command <- commands
-      entity  <- level.entity(command.entityId)
+      entity = Entity(command.entityId)
+      actor  <- entity.get[Acting]
     } {
-      entity match {
-        case state@StateFul(c: Character) => state.update(c.copy(action = command.action))
-        case state@StateFul(b: Building) => state.update(b.copy(action = command.action))
-      }
-    }*/
+      entityStore.system[Acting].put(entity, actor.copy(action = command.action))
+    }
   }
 
   private def findPlayer(playerId: PlayerId): Option[Player] = {
@@ -39,7 +40,6 @@ case class GameSimulation(level: Level,
   }
 
   private def validateInputs(aggregatedCommands: AggregatedCommands) = {
-    /*
     def commandOnlyOwnedEntities: Boolean = {
       def verifyOwnership(playerId: PlayerId, command: Command): Boolean = {
         findPlayer(playerId) match {
@@ -47,9 +47,9 @@ case class GameSimulation(level: Level,
             logger.error(s"Command pretended to come from player $playerId but no such player exists")
             false
           case Some(player) =>
-            level.entity(command.entityId) match {
-              case Some(entity) if entity.team != player.team =>
-                logger.error(s"Illegal command received from player $player. Tried to command units of team ${entity.team} which isn't his")
+            Entity(command.entityId).get[BaseInfo] match {
+              case Some(info) if info.team != player.team =>
+                logger.error(s"Illegal command received from player $player. Tried to command units of team ${info.team} which isn't his")
                 false
               case _ =>
                 true
@@ -60,6 +60,6 @@ case class GameSimulation(level: Level,
     }
     require(aggregatedCommands.iStep == iStep, "Tried to update game simulation with commands from wrong time")
     require(aggregatedCommands.players subsetOf players.map(_.id), "Commands originating from non simulation players")
-    require(commandOnlyOwnedEntities, "One or more players tried to command opponent entities")*/
+    require(commandOnlyOwnedEntities, "One or more players tried to command opponent entities")
   }
 }

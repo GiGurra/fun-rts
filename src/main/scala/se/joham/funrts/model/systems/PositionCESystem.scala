@@ -21,6 +21,9 @@ case class PositionCESystem(entries: mutable.Map[Entity, Positionable] = mutable
     println(s"Added component Positionable. ${entity.info}")
   }
 
+  def update(dt: Long)(implicit store: CEStore, mesh: Mesh): Unit = {
+
+  }
 
   def isConflict(component: Positionable, self: Entity): Boolean = !component.positions.forall(isVacant(_, self))
   def isOccupied(pos: Pos, self: Entity = null.asInstanceOf[Entity]): Boolean = entries.filterKeys(_ != self).values.exists(_.contains(pos))

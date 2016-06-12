@@ -27,6 +27,7 @@ trait CESystem[T <: Component] {
   def size: Int = entries.size
   def isEmpty: Boolean = size == 0
   def nonEmpty: Boolean = !isEmpty
+  def update(dt: Long)(implicit store: CEStore, mesh: Mesh): Unit // Executed every sim iteration
 }
 
 object CESystem {
@@ -39,6 +40,7 @@ object CESystem {
   * Created by johan on 2016-06-12.
   */
 case class DefaultCESystem[T <: Component](entries: mutable.Map[Entity, T]) extends CESystem[T] {
+  def update(dt: Long)(implicit store: CEStore, mesh: Mesh): Unit = {}
 }
 
 object DefaultCESystem {

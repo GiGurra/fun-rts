@@ -12,4 +12,5 @@ case class BaseInfo(name: String, team: Team) extends Component {
 
 object BaseInfo {
   implicit val typ = ComponentType[BaseInfo]
+  implicit val sysFactory = CESystemFactory.default[BaseInfo]
 }

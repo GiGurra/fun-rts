@@ -1,7 +1,7 @@
 package se.joham.funrts.model.components
 
 import se.joham.funrts.math.Vec2FixPt
-import se.joham.funrts.model._
+import se.joham.funrts.model.{CESystemFactory, _}
 
 import scala.language.implicitConversions
 
@@ -25,6 +25,7 @@ case class Positionable(pos: Pos,
 object Positionable {
   implicit def p2positions(p: Positionable): Set[Pos] = p.positions
   implicit val typ = ComponentType[Positionable]
+  implicit val sysFactory = CESystemFactory.default[Positionable]
   def apply(x: Long, y: Long): Positionable = Positionable(Vec2FixPt(x,y), Vec2FixPt(1,1))
   def apply(x: Long, y: Long, size: Size): Positionable = Positionable(Vec2FixPt(x,y), size)
   def apply(x: Long, y: Long, size: Size, acceptedTiles: Set[Cell.Type]): Positionable = Positionable(Vec2FixPt(x,y), size, acceptedTiles)

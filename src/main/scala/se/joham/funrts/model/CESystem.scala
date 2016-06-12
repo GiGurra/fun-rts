@@ -3,6 +3,19 @@ package se.joham.funrts.model
 import scala.collection.mutable
 import scala.language.implicitConversions
 
+trait CESystemFactory[T <: Component] {
+  def apply(): CESystem[T]
+}
+
+object CESystemFactory {
+  def apply[T <: Component](f: () => CESystem[T]): CESystemFactory[T] = new CESystemFactory[T] {
+    override def apply(): CESystem[T] = f()
+  }
+  def default[T <: Component]: CESystemFactory[T] = new CESystemFactory[T] {
+    override def apply(): CESystem[T] = CESystem[T]()
+  }
+}
+
 /**
   * Created by johan on 2016-06-12.
   */

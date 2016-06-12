@@ -8,7 +8,7 @@ import scala.language.implicitConversions
   */
 case class CEStore(systems: mutable.Map[CESystemId, CESystem[Component]] = new mutable.HashMap[CESystemId, CESystem[Component]]) {
 
-  def system[T <: Component : ComponentType]: CESystem[T] = {
+  def system[T <: Component : ComponentType : CESystemFactory]: CESystem[T] = {
     systemOf(implicitly[ComponentType[T]]).asInstanceOf[CESystem[T]]
   }
 

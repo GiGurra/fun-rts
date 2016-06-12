@@ -88,6 +88,10 @@ class CEStoreSpec
 
     "Write a CEStore as JSOn" in {
 
+      // JSON 3.3.0 doesn't support deserializing into mutable collections :(
+      // It's planned for 3.4.0.. but that hasn't been released yet :S
+      // https://github.com/json4s/json4s/pull/310
+
       implicit val store = CEStore()
 
       val json = JSON.write(store, pretty = true)

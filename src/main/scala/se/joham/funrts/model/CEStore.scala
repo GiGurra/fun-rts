@@ -8,9 +8,9 @@ import scala.language.implicitConversions
   */
 case class CEStore(systems: mutable.Map[CESystemId, CESystem[Component]] = new mutable.HashMap[CESystemId, CESystem[Component]]) {
 
-  def system[T <: Component : ComponentType : CESystemFactory]: CESystem[T] = {
-    val id = implicitly[ComponentType[T]].typeId
-    systems.getOrElseUpdate(id, implicitly[CESystemFactory[T]].apply().asInstanceOf[CESystem[Component]]).asInstanceOf[CESystem[T]]
+  def system[T <: Component : ComponentType]: CESystem[T] = {
+    val typ = implicitly[ComponentType[T]]
+    systems.getOrElseUpdate(typ.typeId, typ.systemFactory.apply().asInstanceOf[CESystem[Component]]).asInstanceOf[CESystem[T]]
   }
 
   def allEntities: Set[Entity] = {

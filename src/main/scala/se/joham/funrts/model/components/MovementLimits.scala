@@ -10,6 +10,5 @@ case class MovementLimits(topSpeed: Long) extends Component {
 }
 
 object MovementLimits {
-  implicit val typ = ComponentType[MovementLimits]
-  implicit val sysFactory = CESystemFactory.default[MovementLimits]
+  implicit val typ = ComponentType(CESystemFactory.default[MovementLimits])
 }

@@ -19,7 +19,7 @@ case class Level(mesh: Mesh, entityStore: CEStore) {
 
   def size: Size = mesh.size
 
-  def components[T <: Component : ComponentType : CESystemFactory]: mutable.Map[Entity, T] = {
+  def components[T <: Component : ComponentType]: mutable.Map[Entity, T] = {
     entityStore.system[T].entries
   }
 

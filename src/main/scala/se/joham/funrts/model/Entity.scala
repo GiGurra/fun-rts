@@ -6,7 +6,7 @@ import scala.language.implicitConversions
   * Created by johan on 2016-06-12.
   */
 case class Entity(id: EntityId) extends AnyVal {
-  def +=[T <: Component: ComponentType : CESystemFactory](component: T)(implicit store: CEStore): Entity = {
+  def +=[T <: Component: ComponentType](component: T)(implicit store: CEStore): Entity = {
     store.system[T].entries.put(this, component)
     this
   }
@@ -29,7 +29,7 @@ object Entity {
   def builder(id: EntityId)(implicit store: CEStore): Builder = new Builder(Entity(id))
 
   case class Builder(entity: Entity)(implicit store: CEStore) {
-    def +[T <: Component: ComponentType : CESystemFactory](component: T): Builder = {
+    def +[T <: Component: ComponentType](component: T): Builder = {
       entity += component
       this
     }

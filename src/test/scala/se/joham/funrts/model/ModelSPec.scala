@@ -45,7 +45,7 @@ class ModelSpec
 
         store.allEntities.size shouldBe 2
 
-        b[Positionable] shouldBe Positionable(1,1)
+        b[Positionable] shouldBe Positionable(1,1, size = Vec2FixPt(2,2))
         c[MovementLimits] shouldBe MovementLimits(2)
       }
 

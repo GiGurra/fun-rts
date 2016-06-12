@@ -25,8 +25,8 @@ class ModelSpec
 
     "Level" should {
       "be able to add and get entities of different types from a Level" in {
-        val b = Building(name = "farm", pos = Vec2FixPt(1,1), team = Combatant())
-        val c = Character(name = "footman", pos = Vec2FixPt(0,0), team = Combatant())
+        val b = Building(id = "b", name = "farm", pos = Vec2FixPt(1,1), team = Team.blue)
+        val c = Character(id = "c", name = "footman", pos = Vec2FixPt(0,0), team = Team.blue)
 
         level += b
         level += c
@@ -37,8 +37,8 @@ class ModelSpec
       }
 
       "find entity by ID" in {
-        val b = Building(name = "farm", pos = Vec2FixPt(1,1), team = Combatant())
-        val c = Character(name = "footman", pos = Vec2FixPt(0,0), team = Combatant())
+        val b = Building(id = "b", name = "farm", pos = Vec2FixPt(1,1), team = Team.blue)
+        val c = Character(id = "c", name = "footman", pos = Vec2FixPt(0,0), team = Team.blue)
 
         level += b
         level += c
@@ -50,8 +50,8 @@ class ModelSpec
       }
 
       "Not overlap positions between buildings and characters" in {
-        val character = Character(name = "footman", pos = Vec2FixPt(2,2), team = Combatant())
-        val building = Building(name = "farm", pos = Vec2FixPt(1,1), size = Vec2FixPt(2,2), team = Combatant())
+        val character = Character(id = "character", name = "footman", pos = Vec2FixPt(2,2), team = Team.blue)
+        val building = Building(id = "building", name = "farm", pos = Vec2FixPt(1,1), size = Vec2FixPt(2,2), team = Team.blue)
 
         level += building
 

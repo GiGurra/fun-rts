@@ -1,5 +1,7 @@
 package se.joham.funrts.model.v2
 
+import org.json4s.{CustomKeySerializer, CustomSerializer, Extraction}
+import org.json4s.JsonAST.{JField, JObject, JString}
 import org.scalatest._
 import org.scalatest.mock._
 import se.joham.funrts.math.Vec2FixPt
@@ -38,7 +40,7 @@ class CEStoreSpec
 
     "create an entity with components" in {
       implicit val store = CEStore()
-      val entity = Entity()
+      val entity = Entity("id")
       val p = Positionable(1,2)
       val a = Acting(MovingTo(2,2))
       entity += p
@@ -71,9 +73,9 @@ class CEStoreSpec
       implicit val pSystem = store.system[Positionable]
       implicit val aSystem = store.system[Acting]
 
-      val a: Entity = Entity.builder
-      val b: Entity = Entity.builder + Positionable(1,2)
-      val c: Entity = Entity.builder + Positionable(1,2) + Acting(MovingTo(2,2))
+      val a: Entity = Entity.builder("id1")
+      val b: Entity = Entity.builder("id2") + Positionable(1,2)
+      val c: Entity = Entity.builder("id3") + Positionable(1,2) + Acting(MovingTo(2,2))
 
       a.components.toSet shouldBe Set()
       b.components.toSet shouldBe Set(Positionable(1,2))
@@ -81,6 +83,24 @@ class CEStoreSpec
 
       b[Positionable].pos shouldBe Vec2FixPt(1,2)
       c[Acting].action shouldBe MovingTo(2,2)
+    }
+
+    "Write a CEStore as JSOn" in {
+      implicit val store = CEStore()
+      implicit val pSystem = store.system[Positionable]
+      implicit val aSystem = store.system[Acting]
+
+      object EntitySerializer extends CustomKeySerializer[Entity](_ => ({ case id => Entity(id) },{ case x: Entity => x.id } ))
+
+      val a: Entity = Entity.builder("id1")
+      val b: Entity = Entity.builder("id2") + Positionable(1,2)
+      val c: Entity = Entity.builder("id3") + Positionable(1,2) + Acting(MovingTo(2,2))
+
+      implicit val formats = org.json4s.DefaultFormats + EntitySerializer
+      import org.json4s.jackson.JsonMethods._
+
+      val storeJson = pretty(Extraction.decompose(store)(formats))
+      println(storeJson)
     }
 
   }

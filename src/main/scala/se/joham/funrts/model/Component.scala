@@ -1,7 +1,6 @@
-package se.joham.funrts.model.v2
+package se.joham.funrts.model
 
-import se.joham.funrts.model._
-import se.joham.funrts.model.v2.components.{Acting, BaseInfo, MovementLimits, Positionable}
+import se.joham.funrts.model.components.{Acting, BaseInfo, MovementLimits, Positionable}
 
 import scala.reflect.ClassTag
 

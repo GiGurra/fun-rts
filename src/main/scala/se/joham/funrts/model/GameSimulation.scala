@@ -22,6 +22,7 @@ case class GameSimulation(level: Level,
   }
 
   private def applyCommands(commands: Iterable[Command]): Unit = {
+    /*
     for {
       command <- commands
       entity  <- level.entity(command.entityId)
@@ -30,7 +31,7 @@ case class GameSimulation(level: Level,
         case state@StateFul(c: Character) => state.update(c.copy(action = command.action))
         case state@StateFul(b: Building) => state.update(b.copy(action = command.action))
       }
-    }
+    }*/
   }
 
   private def findPlayer(playerId: PlayerId): Option[Player] = {
@@ -38,6 +39,7 @@ case class GameSimulation(level: Level,
   }
 
   private def validateInputs(aggregatedCommands: AggregatedCommands) = {
+    /*
     def commandOnlyOwnedEntities: Boolean = {
       def verifyOwnership(playerId: PlayerId, command: Command): Boolean = {
         findPlayer(playerId) match {
@@ -58,6 +60,6 @@ case class GameSimulation(level: Level,
     }
     require(aggregatedCommands.iStep == iStep, "Tried to update game simulation with commands from wrong time")
     require(aggregatedCommands.players subsetOf players.map(_.id), "Commands originating from non simulation players")
-    require(commandOnlyOwnedEntities, "One or more players tried to command opponent entities")
+    require(commandOnlyOwnedEntities, "One or more players tried to command opponent entities")*/
   }
 }

@@ -1,6 +1,5 @@
-package se.joham.funrts.model.v2
+package se.joham.funrts.model
 
-import se.joham.funrts.model._
 import scala.collection.mutable
 import scala.language.implicitConversions
 
@@ -39,18 +38,15 @@ case class CEStore(systems: mutable.Map[ComponentSystemId, CESystem[Component]] 
     }
   }
 
-  private[v2] def systemOf(typeIdentifier: ComponentTypeIdentifier[Component]): CESystem[Component] = {
+  private def systemOf(typeIdentifier: ComponentTypeIdentifier[Component]): CESystem[Component] = {
     systems.getOrElseUpdate(typeIdentifier.typeId, CESystem[Component]())
   }
 }
 
 object CEStore {
-  implicit def store2map(store: CEStore): mutable.Map[ComponentSystemId, CESystem[Component]] = new mutable.Map[ComponentSystemId, CESystem[Component]] {
-    val systems = store.systems
-    override def get(key: ComponentSystemId): Option[CESystem[Component]] = systems.get(key)
-    override def iterator: Iterator[(ComponentSystemId, CESystem[Component])] = systems.iterator
-    override def put(k: ComponentSystemId, v: CESystem[Component]): Option[CESystem[Component]] = systems.put(k, v)
-    override def +=(kv: (ComponentSystemId, CESystem[Component])): this.type = { systems += kv; this }
-    override def -=(key: ComponentSystemId): this.type = { systems -= key; this }
+  def apply(systems: Map[ComponentSystemId, CESystem[Component]]): CEStore = {
+    new CEStore(new mutable.HashMap[ComponentSystemId, CESystem[Component]] ++ systems)
   }
+
+  implicit def store2map(store: CEStore): mutable.Map[ComponentSystemId, CESystem[Component]] = store.systems
 }

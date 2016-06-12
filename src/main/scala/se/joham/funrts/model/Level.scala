@@ -1,54 +1,29 @@
 package se.joham.funrts.model
 
 import se.joham.funrts.math.Vec2FixPt
+import se.joham.funrts.model.components.{Acting, BaseInfo, MovementLimits, Positionable}
 
 import scala.collection.mutable
-import scala.reflect.ClassTag
 
 /**
   * Created by johan on 2016-06-11.
   */
-case class Level(mesh: Mesh, entityLkup: mutable.HashMap[EntityId, StateFul[Entity]]) {
-
-  def entities = entityLkup.values
+case class Level(mesh: Mesh, entityStore: CEStore) {
+  implicit val _stor = entityStore
+  implicit val _pSys = entityStore.system[Positionable]
+  implicit val _aSys = entityStore.system[Acting]
+  implicit val _mSys = entityStore.system[MovementLimits]
+  implicit val _bSys = entityStore.system[BaseInfo]
 
   def size: Size = mesh.size
 
-  def entitiesOfType[T <: Entity : ClassTag]: Iterable[StateFul[T]] = entityLkup.values.collect { case s@StateFul(e: T) => s.asInstanceOf[StateFul[T]] }
-  def buildings: Iterable[StateFul[Building]] = entitiesOfType[Building]
-  def characters: Iterable[StateFul[Character]] = entitiesOfType[Character]
-  def entity(id: EntityId): Option[StateFul[Entity]] = entityLkup.get(id)
-
-  def +=(entity: Entity): Unit = {
-    require(canPlace(entity), s"Cannot place entity ${entity.name + entity.id} at ${entity.positions} - the spot is occupied!")
-    entityLkup.put(entity.id, StateFul(entity))
+  def components[T <: Component : ComponentTypeIdentifier]: mutable.Map[Entity, T] = {
+    entityStore.system[T].entries
   }
 
-  def canPlace(entity: Entity): Boolean = {
-    entity match {
-      case c: Character => c.positions.forall(canPlaceCharacterAt)
-      case b: Building => b.positions.forall(canPlaceBuildingAt)
-    }
-  }
-
-  def canPlaceCharacterAt(pos: Pos): Boolean = {
-    mesh(pos).isWalkable && isVacant(pos)
-  }
-
-  def canPlaceBuildingAt(pos: Pos): Boolean = {
-    mesh(pos).isGround && isVacant(pos)
-  }
-
-  def isOccupied(pos: Pos): Boolean = {
-    !isVacant(pos)
-  }
-
-  def isVacant(pos: Pos): Boolean = {
-    // TODO: Optimize with cache once we know where in
-    // TODO: game logic all movements will take place
-    entities.flatMap(_.positions).forall(_ != pos)
-  }
-
+  def isConflict(pos: Positionable, self: Entity): Boolean = pos.forall(isVacant(_, self))
+  def isOccupied(pos: Pos, self: Entity = null.asInstanceOf[Entity]): Boolean = components[Positionable].filterKeys(_ != self).values.exists(_.contains(pos))
+  def isVacant(pos: Pos, self: Entity = null.asInstanceOf[Entity]): Boolean = !isOccupied(pos, self)
 }
 
 case class Mesh(nx: Int, ny: Int, cells: Array[Cell]) {
@@ -83,7 +58,6 @@ object Level {
             seed: String,
             generator: LevelGenerator): Level = {
     val mesh = generator.apply(nx, ny, seed)
-    val entities = new mutable.HashMap[EntityId, StateFul[Entity]]
-    new Level(mesh, entities)
+    new Level(mesh, CEStore())
   }
 }

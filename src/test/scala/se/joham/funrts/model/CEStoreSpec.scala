@@ -1,17 +1,10 @@
-package se.joham.funrts.model.v2
+package se.joham.funrts.model
 
-import java.nio.ByteBuffer
-
-import org.json4s.{CustomKeySerializer, CustomSerializer, Extraction}
-import org.json4s.JsonAST.{JField, JObject, JString}
 import org.scalatest._
 import org.scalatest.mock._
 import se.joham.funrts.math.Vec2FixPt
-import se.joham.funrts.model.v2.components._
-import se.joham.funrts.model.{GroundLevelGenerator, Level, MovingTo, Team}
+import se.joham.funrts.model.components._
 import se.joham.funrts.util.JSON
-
-import scala.collection.mutable
 
 class CEStoreSpec
   extends WordSpec

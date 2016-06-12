@@ -1,6 +1,8 @@
 package se.joham.funrts.model
 
 object Cell {
+  type Type = Byte
+
   val TYPE_GROUND  = 0x00 : Byte
   val TYPE_WATER   = 0x01 : Byte
   val TYPE_COAST   = 0x02 : Byte

@@ -21,7 +21,7 @@ case class Level(mesh: Mesh, entityStore: CEStore) {
     entityStore.system[T].entries
   }
 
-  def isConflict(pos: Positionable, self: Entity): Boolean = pos.forall(isVacant(_, self))
+  def isConflict(pos: Positionable, self: Entity): Boolean = !pos.forall(isVacant(_, self))
   def isOccupied(pos: Pos, self: Entity = null.asInstanceOf[Entity]): Boolean = components[Positionable].filterKeys(_ != self).values.exists(_.contains(pos))
   def isVacant(pos: Pos, self: Entity = null.asInstanceOf[Entity]): Boolean = !isOccupied(pos, self)
 }

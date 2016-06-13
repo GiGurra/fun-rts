@@ -12,11 +12,11 @@ case class CEStore(systems: Map[CESystemId, CESystem[Component]])  {
     systems.getOrElse(typ.typeId, throw new RuntimeException(s"No system of type $typ in $this")).asInstanceOf[CESystem[T]]
   }
 
-  def -=(entity: Entity): Unit = {
+  def -=(entity: EntityId): Unit = {
     systems.values.foreach(_ -= entity)
   }
 
-  def componentsOf(entity: Entity): Iterable[Component] = {
+  def componentsOf(entity: EntityId): Iterable[Component] = {
     for {
       system <- systems.values
       component <- system.get(entity)
@@ -25,7 +25,7 @@ case class CEStore(systems: Map[CESystemId, CESystem[Component]])  {
     }
   }
 
-  def containsEntity(entity: Entity): Boolean = {
+  def containsEntity(entity: EntityId): Boolean = {
     systems.values.exists(_.contains(entity))
   }
   
@@ -40,7 +40,7 @@ case class CEStore(systems: Map[CESystemId, CESystem[Component]])  {
   }
 
   @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
-  def -(entity: Entity): CEStore = {
+  def -(entity: EntityId): CEStore = {
     val out = duplicate
     out -= entity
     out

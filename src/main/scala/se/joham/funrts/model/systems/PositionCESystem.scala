@@ -10,9 +10,9 @@ import scala.collection.mutable
   */
 case class PositionCESystem(entries: mutable.Map[EntityId, Positionable] = mutable.HashMap.empty) extends CESystem[Positionable] {
 
-  override def put(entity: EntityId, component: Positionable)(implicit store: CEStore, mesh: Mesh): Unit = {
+  override def put(entity: EntityId, component: Positionable)(implicit store: CEStore, terrain: Terrain): Unit = {
     val positions = component.positions
-    val tiles = positions.map(mesh.apply)
+    val tiles = positions.map(terrain.apply)
 
     require(tiles.forall(_.isEitherType(component.acceptedTiles)), s"Cannot place entity $entity at $positions since tiles at that position are not compatible!")
     require(positions.forall(isVacant(_, entity)), s"Cannot place entity $entity at $positions since that position is already occupied!")
@@ -21,7 +21,7 @@ case class PositionCESystem(entries: mutable.Map[EntityId, Positionable] = mutab
     println(s"Added component Positionable. ${Entity(entity).info}")
   }
 
-  override def update(dt: Long)(implicit store: CEStore, mesh: Mesh): Unit = {
+  override def update(dt: Long)(implicit store: CEStore, terrain: Terrain): Unit = {
 
   }
 

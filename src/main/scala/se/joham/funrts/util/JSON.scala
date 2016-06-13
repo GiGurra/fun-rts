@@ -27,13 +27,13 @@ object JSON {
   //////////////////////////////////////////////////////////////////////////////////////
 
 
-  object MeshSerializer extends CustomSerializer[Mesh](_ => ({
-    case json => extract[MeshSerializable](json).toMesh },{
-    case mesh: Mesh => decompose(new MeshSerializable(mesh))
+  object TerrainSerializer extends CustomSerializer[Terrain](_ => ({
+    case json => extract[TerrainSerializable](json).toTerrain },{
+    case terrain: Terrain => decompose(new TerrainSerializable(terrain))
   }))
-  case class MeshSerializable(nx: Int, ny: Int, base64Tiles: String) {
-    def this(mesh: Mesh) = this(mesh.nx, mesh.ny, Base64.encodeString(mesh.tiles))
-    def toMesh: Mesh = new Mesh(nx, ny, Base64.decodeBinary(base64Tiles))
+  case class TerrainSerializable(nx: Int, ny: Int, base64Tiles: String) {
+    def this(terrain: Terrain) = this(terrain.nx, terrain.ny, Base64.encodeString(terrain.tiles))
+    def toTerrain: Terrain = new Terrain(nx, ny, Base64.decodeBinary(base64Tiles))
   }
   object CESystemSerializer extends CustomSerializer[CESystem[Component]](_ => ({
     case json => extract[CeSystemSerializable](json).toCeSystem },{
@@ -61,7 +61,7 @@ object JSON {
 
   lazy val defaultFormats =
     org.json4s.DefaultFormats +
-      MeshSerializer +
+      TerrainSerializer +
       CESystemSerializer +
       ShortTypeHints(Component.classes) +
       ShortTypeHints(Action.classes) +

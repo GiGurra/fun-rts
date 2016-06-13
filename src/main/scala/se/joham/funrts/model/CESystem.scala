@@ -10,11 +10,11 @@ trait CESystem[T <: Component] {
   def -=(entity: EntityId): Unit = entries -= entity
   def values: Iterable[T] = entries.values
   def keys: Iterable[EntityId] = entries.keys
-  def put(entity: EntityId, component: T)(implicit store: CEStore, mesh: Mesh): Unit = entries.put(entity, component)
+  def put(entity: EntityId, component: T)(implicit store: CEStore, terrain: Terrain): Unit = entries.put(entity, component)
   def size: Int = entries.size
   def isEmpty: Boolean = size == 0
   def nonEmpty: Boolean = !isEmpty
-  def update(dt: Long)(implicit store: CEStore, mesh: Mesh): Unit = {}// Executed every sim iteration
+  def update(dt: Long)(implicit store: CEStore, terrain: Terrain): Unit = {}// Executed every sim iteration
   def duplicate: CESystem[T]
 }
 

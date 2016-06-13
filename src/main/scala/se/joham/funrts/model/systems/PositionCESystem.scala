@@ -30,6 +30,6 @@ case class PositionCESystem(entries: mutable.Map[EntityId, Positionable] = mutab
   def isVacant(pos: Pos, self: EntityId = null.asInstanceOf[EntityId]): Boolean = !isOccupied(pos, self)
 
   def duplicate: PositionCESystem = {
-    copy(entries = new mutable.HashMap[EntityId, Positionable] ++ entries)
+    copy(entries.clone())
   }
 }

@@ -80,6 +80,6 @@ object Level {
             seed: String,
             generator: LevelGenerator): Level = {
     val mesh = generator.apply(nx, ny, seed)
-    new Level(mesh, GameCESTore())
+    new Level(mesh, CEStore.default)
   }
 }

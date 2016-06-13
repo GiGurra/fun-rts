@@ -1,5 +1,7 @@
 package se.joham.funrts.model
 
+import se.joham.funrts.model.components.{Acting, BaseInfo, MovementLimits, Positionable}
+
 import scala.language.implicitConversions
 
 /**
@@ -52,6 +54,8 @@ object CEStore {
   def apply(types: ComponentType[_]*): CEStore = {
     CEStore(types.map(typ => typ.typeId -> typ.newSystem.asInstanceOf[CESystem[Component]]).toMap)
   }
+
+  def default: CEStore = CEStore(Positionable.typ, BaseInfo.typ, MovementLimits.typ, Acting.typ)
 
   implicit def store2map(store: CEStore): scala.collection.Map[CESystemId, CESystem[Component]] = store.systems
 }

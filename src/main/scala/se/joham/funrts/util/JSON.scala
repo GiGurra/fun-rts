@@ -1,6 +1,5 @@
 package se.joham.funrts.util
 
-import org.json4s.JsonAST.JString
 import org.json4s.{CustomSerializer, Extraction, ShortTypeHints}
 import se.joham.funrts.model._
 import org.json4s.jackson.JsonMethods.{compact, parse}
@@ -27,26 +26,25 @@ object JSON {
 
   //////////////////////////////////////////////////////////////////////////////////////
 
-  object CESystemSerializer extends CustomSerializer[CESystem[Component]](_ => ({
-    case json => extract[CeSystemSerialized](json).toCeSystem },{
-    case system: CESystem[_] => decompose(CeSystemSerialized(system))
-  }))
 
   object MeshSerializer extends CustomSerializer[Mesh](_ => ({
-    case json => extract[MeshSerialized](json).toMesh },{
-    case mesh: Mesh => decompose(new MeshSerialized(mesh))
+    case json => extract[MeshSerializable](json).toMesh },{
+    case mesh: Mesh => decompose(new MeshSerializable(mesh))
   }))
-
-  case class MeshSerialized(nx: Int, ny: Int, base64Tiles: String) {
+  case class MeshSerializable(nx: Int, ny: Int, base64Tiles: String) {
     def this(mesh: Mesh) = this(mesh.nx, mesh.ny, Base64.encodeString(mesh.tiles))
     def toMesh: Mesh = new Mesh(nx, ny, Base64.decodeBinary(base64Tiles))
   }
-  case class CeSystemSerialized(clsName: String, entries: Map[EntityId, Component]) {
+  object CESystemSerializer extends CustomSerializer[CESystem[Component]](_ => ({
+    case json => extract[CeSystemSerializable](json).toCeSystem },{
+    case system: CESystem[_] => decompose(CeSystemSerializable(system))
+  }))
+  case class CeSystemSerializable(clsName: String, entries: Map[EntityId, Component]) {
     def toCeSystem: CESystem[Component] = {
-      CeSystemSerialized.getCtor(clsName)(new mutable.HashMap[EntityId, Component] ++ entries.map(p => p._1 -> p._2))
+      CeSystemSerializable.getCtor(clsName)(new mutable.HashMap[EntityId, Component] ++ entries.map(p => p._1 -> p._2))
     }
   }
-  object CeSystemSerialized {
+  object CeSystemSerializable {
     private val ctors = new scala.collection.concurrent.TrieMap[String, mutable.Map[_,_] => CESystem[Component]]
     private def getCtor(clsName: String): mutable.Map[_,_] => CESystem[Component] = {
       ctors.getOrElseUpdate(clsName, {
@@ -56,15 +54,15 @@ object JSON {
       })
     }
 
-    def apply[T <: Component](system: CESystem[T]): CeSystemSerialized = {
-      CeSystemSerialized(system.getClass.getName, system.toMap)
+    def apply[T <: Component](system: CESystem[T]): CeSystemSerializable = {
+      CeSystemSerializable(system.getClass.getName, system.toMap)
     }
   }
 
   lazy val defaultFormats =
     org.json4s.DefaultFormats +
-      CESystemSerializer +
       MeshSerializer +
+      CESystemSerializer +
       ShortTypeHints(Component.classes) +
       ShortTypeHints(Action.classes) +
       ShortTypeHints(Team.classes)

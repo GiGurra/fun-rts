@@ -12,7 +12,7 @@ object CESystemFactory {
     override def apply(): CESystem[T] = f()
   }
   def default[T <: Component]: CESystemFactory[T] = new CESystemFactory[T] {
-    override def apply(): CESystem[T] = DefaultCESystem[T]()
+    override def apply(): CESystem[T] = new DefaultCESystem[T](mutable.Map.empty)
   }
 }
 
@@ -27,7 +27,7 @@ trait CESystem[T <: Component] {
   def size: Int = entries.size
   def isEmpty: Boolean = size == 0
   def nonEmpty: Boolean = !isEmpty
-  def update(dt: Long)(implicit store: CEStore, mesh: Mesh): Unit // Executed every sim iteration
+  def update(dt: Long)(implicit store: CEStore, mesh: Mesh): Unit = {}// Executed every sim iteration
   def duplicate: CESystem[T]
 }
 
@@ -41,11 +41,5 @@ object CESystem {
   * Created by johan on 2016-06-12.
   */
 case class DefaultCESystem[T <: Component](entries: mutable.Map[EntityId, T]) extends CESystem[T] {
-  def update(dt: Long)(implicit store: CEStore, mesh: Mesh): Unit = {}
   def duplicate: DefaultCESystem[T] = copy(entries.clone())
-}
-
-object DefaultCESystem {
-  def apply[T <: Component](entries: Map[EntityId, T]): CESystem[T] = new DefaultCESystem[T](new mutable.HashMap[EntityId, T] ++ entries)
-  def apply[T <: Component](): CESystem[T] = apply[T](Map.empty[EntityId, T])
 }

@@ -21,7 +21,7 @@ case class PositionCESystem(entries: mutable.Map[EntityId, Positionable] = mutab
     println(s"Added component Positionable. ${Entity(entity).info}")
   }
 
-  def update(dt: Long)(implicit store: CEStore, mesh: Mesh): Unit = {
+  override def update(dt: Long)(implicit store: CEStore, mesh: Mesh): Unit = {
 
   }
 

@@ -39,4 +39,6 @@ object Entity {
   object Builder {
     implicit def builder2entity(b: Builder): Entity = b.entity
   }
+
+  implicit def e2id(e: Entity): EntityId = e.id
 }

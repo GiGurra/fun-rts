@@ -17,13 +17,13 @@ object CESystemFactory {
 }
 
 trait CESystem[T <: Component] {
-  protected def entries: mutable.Map[Entity, T]
-  def apply(entity: Entity): T = entries.apply(entity)
-  def get(entity: Entity): Option[T] = entries.get(entity)
-  def -=(entity: Entity): Unit = entries -= entity
+  protected def entries: mutable.Map[EntityId, T]
+  def apply(entity: EntityId): T = entries.apply(entity)
+  def get(entity: EntityId): Option[T] = entries.get(entity)
+  def -=(entity: EntityId): Unit = entries -= entity
   def values: Iterable[T] = entries.values
-  def keys: Iterable[Entity] = entries.keys
-  def put(entity: Entity, component: T)(implicit store: CEStore, mesh: Mesh): Unit = entries.put(entity, component)
+  def keys: Iterable[EntityId] = entries.keys
+  def put(entity: EntityId, component: T)(implicit store: CEStore, mesh: Mesh): Unit = entries.put(entity, component)
   def size: Int = entries.size
   def isEmpty: Boolean = size == 0
   def nonEmpty: Boolean = !isEmpty
@@ -32,7 +32,7 @@ trait CESystem[T <: Component] {
 }
 
 object CESystem {
-  implicit def sys2Map[T <: Component](sys: CESystem[T]): scala.collection.Map[Entity, T] = {
+  implicit def sys2Map[T <: Component](sys: CESystem[T]): scala.collection.Map[EntityId, T] = {
     sys.entries
   }
 }
@@ -40,12 +40,12 @@ object CESystem {
 /**
   * Created by johan on 2016-06-12.
   */
-case class DefaultCESystem[T <: Component](entries: mutable.Map[Entity, T]) extends CESystem[T] {
+case class DefaultCESystem[T <: Component](entries: mutable.Map[EntityId, T]) extends CESystem[T] {
   def update(dt: Long)(implicit store: CEStore, mesh: Mesh): Unit = {}
-  def duplicate: DefaultCESystem[T] = copy(new mutable.HashMap[Entity, T] ++ entries)
+  def duplicate: DefaultCESystem[T] = copy(entries.clone())
 }
 
 object DefaultCESystem {
-  def apply[T <: Component](entries: Map[EntityId, T]): CESystem[T] = new DefaultCESystem[T](new mutable.HashMap[Entity, T] ++ entries.map(p => Entity(p._1) -> p._2))
+  def apply[T <: Component](entries: Map[EntityId, T]): CESystem[T] = new DefaultCESystem[T](new mutable.HashMap[EntityId, T] ++ entries)
   def apply[T <: Component](): CESystem[T] = apply[T](Map.empty[EntityId, T])
 }

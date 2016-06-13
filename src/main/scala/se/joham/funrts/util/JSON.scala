@@ -27,36 +27,23 @@ object JSON {
 
   //////////////////////////////////////////////////////////////////////////////////////
 
-  object CESToreSerializer extends CustomSerializer[CEStore](_ => ({
-    case json => CEStore(extract[Map[CESystemId, CESystem[Component]]](json)) },{
-    case store: DefaultCEStore => decompose(store.systems)
-  }))
-
   object CESystemSerializer extends CustomSerializer[CESystem[Component]](_ => ({
     case json => extract[CeSystemSerialized](json).toCeSystem },{
     case system: CESystem[_] => decompose(CeSystemSerialized(system))
   }))
 
-  object EntitySerializer extends CustomSerializer[Entity](_ => ({
-    case id: JString => Entity(id.s) },{
-    case x: Entity => JString(x.id)
-  }))
-
   object MeshSerializer extends CustomSerializer[Mesh](_ => ({
     case json => extract[MeshSerialized](json).toMesh },{
-    case mesh: Mesh => decompose(MeshSerialized(mesh))
+    case mesh: Mesh => decompose(new MeshSerialized(mesh))
   }))
 
   case class MeshSerialized(nx: Int, ny: Int, base64Tiles: String) {
+    def this(mesh: Mesh) = this(mesh.nx, mesh.ny, Base64.encodeString(mesh.tiles))
     def toMesh: Mesh = new Mesh(nx, ny, Base64.decodeBinary(base64Tiles))
   }
-  object MeshSerialized {
-    def apply(mesh: Mesh): MeshSerialized = new MeshSerialized(mesh.nx, mesh.ny, Base64.encodeString(mesh.tiles))
-  }
-
-  case class CeSystemSerialized(clsName: String, entries: Map[String, Component]) {
+  case class CeSystemSerialized(clsName: String, entries: Map[EntityId, Component]) {
     def toCeSystem: CESystem[Component] = {
-      CeSystemSerialized.getCtor(clsName)(new mutable.HashMap[EntityId, Component] ++ entries.map(p => Entity(p._1) -> p._2))
+      CeSystemSerialized.getCtor(clsName)(new mutable.HashMap[EntityId, Component] ++ entries.map(p => p._1 -> p._2))
     }
   }
   object CeSystemSerialized {
@@ -70,15 +57,13 @@ object JSON {
     }
 
     def apply[T <: Component](system: CESystem[T]): CeSystemSerialized = {
-      CeSystemSerialized(system.getClass.getName, system.map(p => p._1.id -> p._2).toMap)
+      CeSystemSerialized(system.getClass.getName, system.toMap)
     }
   }
 
   lazy val defaultFormats =
     org.json4s.DefaultFormats +
-      CESToreSerializer +
       CESystemSerializer +
-      EntitySerializer +
       MeshSerializer +
       ShortTypeHints(Component.classes) +
       ShortTypeHints(Action.classes) +

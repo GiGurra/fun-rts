@@ -1,37 +1,15 @@
 package se.joham.funrts.model
 
-import scala.collection.mutable
 import scala.language.implicitConversions
-
-trait CEStore {
-  def containsEntity(entity: Entity): Boolean
-  def systems: scala.collection.Map[CESystemId, CESystem[Component]]
-  def system[T <: Component : ComponentType]: CESystem[T]
-  def -=(entity: Entity): Unit
-  def componentsOf(entity: Entity): Iterable[Component]
-
-  @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
-  def duplicate: CEStore
-
-  @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
-  def allEntities: Set[Entity] // This function is slooooooow
-
-  @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
-  def -(entity: Entity): CEStore = {
-    val out = duplicate
-    out -= entity
-    out
-  }
-}
 
 /**
   * Created by johan on 2016-06-11.
   */
-case class DefaultCEStore(systems: mutable.Map[CESystemId, CESystem[Component]]) extends CEStore {
+case class CEStore(systems: Map[CESystemId, CESystem[Component]])  {
 
   def system[T <: Component : ComponentType]: CESystem[T] = {
     val typ = implicitly[ComponentType[T]]
-    systems.getOrElseUpdate(typ.typeId, typ.systemFactory.apply().asInstanceOf[CESystem[Component]]).asInstanceOf[CESystem[T]]
+    systems.getOrElse(typ.typeId, throw new RuntimeException(s"No system of type $typ in $this")).asInstanceOf[CESystem[T]]
   }
 
   def -=(entity: Entity): Unit = {
@@ -52,23 +30,28 @@ case class DefaultCEStore(systems: mutable.Map[CESystemId, CESystem[Component]])
   }
   
   @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
-  def allEntities: Set[Entity] = {
+  def allEntities: Set[EntityId] = {
     systems.values.flatMap(_.keys).toSet
   }
 
   @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
-  def duplicate: DefaultCEStore = {
-    copy(systems = new mutable.HashMap[CESystemId, CESystem[Component]] ++ systems.mapValues(_.duplicate))
+  def duplicate: CEStore = {
+    copy(systems.map(p => p._1 -> p._2.duplicate))
   }
 
+  @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
+  def -(entity: Entity): CEStore = {
+    val out = duplicate
+    out -= entity
+    out
+  }
 }
 
 object CEStore {
-  def apply(systems: Map[CESystemId, CESystem[Component]] = Map.empty): DefaultCEStore = {
-    new DefaultCEStore(new mutable.HashMap[CESystemId, CESystem[Component]] ++ systems)
-  }
 
-  def classes = List(classOf[DefaultCEStore])
+  def apply(types: ComponentType[_]*): CEStore = {
+    CEStore(types.map(typ => typ.typeId -> typ.systemFactory.apply().asInstanceOf[CESystem[Component]]).toMap)
+  }
 
   implicit def store2map(store: CEStore): scala.collection.Map[CESystemId, CESystem[Component]] = store.systems
 }

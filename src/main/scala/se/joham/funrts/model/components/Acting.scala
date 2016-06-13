@@ -11,5 +11,5 @@ case class Acting(action: Action) extends Component {
 }
 
 object Acting {
-  implicit val typ = ComponentType(CESystemFactory.default[Acting])
+  implicit val typ = ComponentType(DefaultCESystem[Acting]())
 }

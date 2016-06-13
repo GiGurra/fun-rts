@@ -10,13 +10,13 @@ import scala.reflect.ClassTag
 trait Component { def typeIdentifier: ComponentType[_ <: Component] }
 trait ComponentType[T <: Component] {
   def typeId: CESystemId
-  def systemFactory: CESystemFactory[T]
+  def newSystem: CESystem[T]
 }
 object ComponentType {
-  def apply[T <: Component : ClassTag](factory: CESystemFactory[T]) = {
+  def apply[T <: Component : ClassTag](systemCtor: => CESystem[T]) = {
     new ComponentType[T] {
       def typeId: CESystemId = implicitly[ClassTag[T]].runtimeClass.getSimpleName
-      def systemFactory: CESystemFactory[T] = factory
+      def newSystem: CESystem[T] = systemCtor
     }
   }
 }

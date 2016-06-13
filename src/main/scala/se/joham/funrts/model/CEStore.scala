@@ -50,7 +50,7 @@ case class CEStore(systems: Map[CESystemId, CESystem[Component]])  {
 object CEStore {
 
   def apply(types: ComponentType[_]*): CEStore = {
-    CEStore(types.map(typ => typ.typeId -> typ.systemFactory.apply().asInstanceOf[CESystem[Component]]).toMap)
+    CEStore(types.map(typ => typ.typeId -> typ.newSystem.asInstanceOf[CESystem[Component]]).toMap)
   }
 
   implicit def store2map(store: CEStore): scala.collection.Map[CESystemId, CESystem[Component]] = store.systems

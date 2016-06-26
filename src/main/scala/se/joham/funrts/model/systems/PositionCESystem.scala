@@ -21,7 +21,7 @@ case class PositionCESystem(entries: mutable.Map[Entity.Id, Positionable] = muta
     require(positions.forall(isVacant(_, entity)), s"Cannot place entity $entity at $positions since that position is already occupied!")
 
     super.put(entity, component, context)
-    println(s"Added component Positionable. ${Entity(entity).info}")
+    println(s"Added component Positionable. ${EntityInfo(entity)}")
   }
 
   override def update(dt: Long, context: Context): Unit = {

@@ -5,6 +5,7 @@ import se.joham.funrts.model._
 import org.json4s.jackson.JsonMethods.{compact, parse}
 import org.json4s.jackson.JsonMethods.{pretty => prty}
 import Extraction.{decompose, extract}
+import se.joham.funrts.model.components.ComponentTypes
 import se.joham.funrts.scalego.{CESystem, Component, Entity}
 
 import scala.collection.mutable
@@ -64,6 +65,6 @@ object JSON {
     org.json4s.DefaultFormats +
       TerrainSerializer +
       CESystemSerializer +
-      ShortTypeHints(Component.classes) +
+      ShortTypeHints(ComponentTypes.classes) +
       ShortTypeHints(Action.classes)
 }

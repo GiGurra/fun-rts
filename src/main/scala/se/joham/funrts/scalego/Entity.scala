@@ -1,7 +1,5 @@
 package se.joham.funrts.scalego
 
-import se.joham.funrts.util.JSON
-
 import scala.language.implicitConversions
 
 /**
@@ -17,16 +15,8 @@ case class Entity(id: Entity.Id) extends AnyVal {
   def component[T <: Component: ComponentType](implicit system: CESystem[T, _]): T = apply[T]
   def getComponent[T <: Component: ComponentType](implicit system: CESystem[T, _]): Option[T] = get[T]
   def components(implicit store: CEStore[_]): Iterable[Component] = store.componentsOf(this)
-
-  def info(implicit store: CEStore[_]): String = {
-    val buffer = new StringBuffer()
-    buffer.append(s"Entity ($id) components:\n")
-    for (component <- components) {
-      buffer.append(s"  ${JSON.write(component, pretty = false)}")
-    }
-    buffer.toString
-  }
 }
+
 object Entity {
   type Id = String
 

@@ -4,8 +4,7 @@ import org.scalatest._
 import org.scalatest.mock._
 import se.joham.funrts.math.Vec2FixPt
 import se.joham.funrts.model.components._
-import se.joham.funrts.model.systems.PositionCESystem
-import se.joham.funrts.scalego.{CEStore, Entity}
+import se.joham.funrts.scalego.Entity
 import se.joham.funrts.util.JSON
 
 class CEStoreSpec
@@ -17,7 +16,7 @@ class CEStoreSpec
   with BeforeAndAfterEach {
 
   val levelGen = GroundLevelGenerator
-  val store = CEStore[Context]() ++ PositionCESystem() ++ DefaultCESystem[BaseInfo]() ++ DefaultCESystem[MovementLimits]() ++ DefaultCESystem[Acting]()
+  val store = DefaultCEStore()
   val level = Level(10, 10, seed = "test", levelGen, store)
   import level._
   implicit val _aSys = store.system[Acting]
@@ -83,7 +82,7 @@ class CEStoreSpec
       val json = JSON.write(store, pretty = false)
       println(json)
 
-      val storeBack = JSON.read[CEStore[Context]](json)
+      val storeBack = JSON.read[DefaultCEStore.Type](json)
       println(JSON.write(storeBack, pretty = false))
 
       storeBack shouldBe store

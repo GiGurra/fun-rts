@@ -2,6 +2,7 @@ package se.joham.funrts.model.systems
 
 import se.joham.funrts.model.components.Positionable
 import se.joham.funrts.model._
+import se.joham.funrts.model.Tile._
 
 import scala.collection.mutable
 

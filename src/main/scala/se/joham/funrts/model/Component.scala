@@ -7,16 +7,12 @@ import scala.reflect.ClassTag
 /**
   * Created by johan on 2016-06-12.
   */
-trait Component { def typeIdentifier: ComponentType[_ <: Component] }
-trait ComponentType[T <: Component] {
-  def typeId: CESystemId
-  def newSystem: CESystem[T]
-}
+trait Component { def typ: ComponentType[_ <: Component] }
+trait ComponentType[T <: Component] { def id: ComponentTypeId }
 object ComponentType {
-  def apply[T <: Component : ClassTag](systemCtor: => CESystem[T]) = {
+  def apply[T <: Component : ClassTag] = {
     new ComponentType[T] {
-      def typeId: CESystemId = implicitly[ClassTag[T]].runtimeClass.getSimpleName
-      def newSystem: CESystem[T] = systemCtor
+      def id: ComponentTypeId = implicitly[ClassTag[T]].runtimeClass.getSimpleName
     }
   }
 }

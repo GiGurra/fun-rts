@@ -1,17 +1,19 @@
 package se.joham.funrts.model
 
+import se.gigurra.heisenberg.FixErasure1
 import se.joham.funrts.model.components.{Acting, BaseInfo, MovementLimits, Positionable}
+import se.joham.funrts.model.systems.PositionCESystem
 
 import scala.language.implicitConversions
 
 /**
   * Created by johan on 2016-06-11.
   */
-case class CEStore(systems: Map[CESystemId, CESystem[Component]])  {
+case class CEStore(systems: Map[ComponentTypeId, CESystem[Component]])  {
 
   def system[T <: Component : ComponentType]: CESystem[T] = {
     val typ = implicitly[ComponentType[T]]
-    systems.getOrElse(typ.typeId, throw new RuntimeException(s"No system of type $typ in $this")).asInstanceOf[CESystem[T]]
+    systems.getOrElse(typ.id, throw new RuntimeException(s"No system of type $typ in $this")).asInstanceOf[CESystem[T]]
   }
 
   def -=(entity: EntityId): Unit = {
@@ -51,11 +53,14 @@ case class CEStore(systems: Map[CESystemId, CESystem[Component]])  {
 
 object CEStore {
 
-  def apply(types: ComponentType[_]*): CEStore = {
-    CEStore(types.map(typ => typ.typeId -> typ.newSystem.asInstanceOf[CESystem[Component]]).toMap)
-  }
+  def default: CEStore = fromTypes(
+    Positionable.typ   -> PositionCESystem(),
+    BaseInfo.typ       -> DefaultCESystem[BaseInfo](),
+    MovementLimits.typ -> DefaultCESystem[MovementLimits](),
+    Acting.typ         -> DefaultCESystem[Acting]()
+  )
 
-  def default: CEStore = CEStore(Positionable.typ, BaseInfo.typ, MovementLimits.typ, Acting.typ)
+  def fromTypes(types: (ComponentType[_], CESystem[_])*) = new CEStore(types.map { case (k,v) => k.id -> v.asInstanceOf[CESystem[Component]]}.toMap)
 
-  implicit def store2map(store: CEStore): scala.collection.Map[CESystemId, CESystem[Component]] = store.systems
+  implicit def store2map(store: CEStore): scala.collection.Map[ComponentTypeId, CESystem[Component]] = store.systems
 }

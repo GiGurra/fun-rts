@@ -64,6 +64,5 @@ object JSON {
       TerrainSerializer +
       CESystemSerializer +
       ShortTypeHints(Component.classes) +
-      ShortTypeHints(Action.classes) +
-      ShortTypeHints(Team.classes)
+      ShortTypeHints(Action.classes)
 }

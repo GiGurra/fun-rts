@@ -1,14 +1,14 @@
 package se.joham.funrts.model.components
 
-import se.joham.funrts.model.{Component, ComponentType, DefaultCESystem}
+import se.joham.funrts.model.{Component, ComponentType}
 
 /**
   * Created by johan on 2016-06-12.
   */
 case class MovementLimits(topSpeed: Long) extends Component {
-  def typeIdentifier: ComponentType[MovementLimits] = MovementLimits.typ
+  def typ: ComponentType[MovementLimits] = MovementLimits.typ
 }
 
 object MovementLimits {
-  implicit val typ = ComponentType(DefaultCESystem[MovementLimits]())
+  implicit val typ = ComponentType[MovementLimits]
 }

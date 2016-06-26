@@ -5,6 +5,7 @@ import org.scalatest._
 import org.scalatest.mock._
 import se.joham.funrts.math.Vec2FixPt
 import se.joham.funrts.model.components.{Acting, BaseInfo, MovementLimits, Positionable}
+import se.joham.funrts.model.systems.PositionCESystem
 import se.joham.funrts.util.{JSON, Zip}
 
 class ModelSpec
@@ -16,8 +17,8 @@ class ModelSpec
   with BeforeAndAfterEach {
 
   val levelGen = GroundLevelGenerator
-  val level = Level(10, 10, seed = "test", levelGen)
-  val store = level.entityStore
+  val store = CEStore() ++ PositionCESystem() ++ DefaultCESystem[BaseInfo]() ++ DefaultCESystem[MovementLimits]() ++ DefaultCESystem[Acting]()
+  val level = Level(10, 10, seed = "test", levelGen, store)
   import level._
 
   def makeBuilding(id: EntityId, name: String, pos: Pos, team: Team, size: Size = Vec2FixPt(2,2)): Entity = {

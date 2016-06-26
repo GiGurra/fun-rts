@@ -1,6 +1,7 @@
 package se.joham.funrts.model
 
 import se.joham.funrts.model.components._
+import se.joham.funrts.model.systems.PositionCESystem
 
 /**
   * Created by johan on 2016-06-11.
@@ -33,11 +34,13 @@ case class Level(terrain: Terrain, entityStore: CEStore) {
 }
 
 object Level {
+
   def apply(nx: Int,
             ny: Int,
             seed: String,
-            generator: LevelGenerator): Level = {
+            generator: LevelGenerator,
+            entityStore: CEStore): Level = {
     val terrain = generator.apply(nx, ny, seed)
-    new Level(terrain, CEStore.default)
+    new Level(terrain, entityStore)
   }
 }

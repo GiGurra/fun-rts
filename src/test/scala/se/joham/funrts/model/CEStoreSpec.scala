@@ -4,6 +4,7 @@ import org.scalatest._
 import org.scalatest.mock._
 import se.joham.funrts.math.Vec2FixPt
 import se.joham.funrts.model.components._
+import se.joham.funrts.model.systems.PositionCESystem
 import se.joham.funrts.util.JSON
 
 class CEStoreSpec
@@ -15,8 +16,8 @@ class CEStoreSpec
   with BeforeAndAfterEach {
 
   val levelGen = GroundLevelGenerator
-  val level = Level(10, 10, seed = "test", levelGen)
-  val store = level.entityStore
+  val store = CEStore() ++ PositionCESystem() ++ DefaultCESystem[BaseInfo]() ++ DefaultCESystem[MovementLimits]() ++ DefaultCESystem[Acting]()
+  val level = Level(10, 10, seed = "test", levelGen, store)
   import level._
 
   "CEStore" should {

@@ -9,5 +9,9 @@ import se.joham.funrts.scalego.CEStore
   */
 object DefaultCEStore {
   type Type = CEStore[Context]
-  def apply(): Type = CEStore[Context]() ++ PositionCESystem() ++ DefaultCESystem[BaseInfo]() ++ DefaultCESystem[MovementLimits]() ++ DefaultCESystem[Acting]()
+  def apply(): Type = (CEStore.newBuilder[Context] ++
+    PositionCESystem() ++
+    DefaultCESystem[BaseInfo]() ++
+    DefaultCESystem[MovementLimits]() ++
+    DefaultCESystem[Acting]()).build
 }

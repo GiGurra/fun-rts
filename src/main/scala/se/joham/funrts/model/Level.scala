@@ -17,15 +17,6 @@ case class Level(terrain: Terrain, entityStore: CEStore[Context]) {
     entityStore.containsEntity(entity)
   }
 
-  @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
-  def -(entity: Entity): Level = {
-    copy(terrain.duplicate, entityStore - entity)
-  }
-
-  @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
-  def duplicate: Level = {
-    copy(terrain.duplicate, entityStore.duplicate)
-  }
 }
 
 object Level {

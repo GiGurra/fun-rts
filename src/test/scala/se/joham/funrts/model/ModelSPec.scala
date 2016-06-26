@@ -7,6 +7,8 @@ import se.joham.funrts.math.Vec2FixPt
 import se.joham.funrts.model.components.{Acting, BaseInfo, MovementLimits, Positionable}
 import se.joham.funrts.scalego.Entity
 import se.joham.funrts.util.{JSON, Zip}
+import se.joham.funrts.scalego.TestAPI._
+import se.joham.funrts.model.TestAPI._
 
 class ModelSpec
   extends WordSpec

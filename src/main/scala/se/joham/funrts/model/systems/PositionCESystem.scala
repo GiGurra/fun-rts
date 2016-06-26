@@ -2,27 +2,29 @@ package se.joham.funrts.model.systems
 
 import se.joham.funrts.model.components.Positionable
 import se.joham.funrts.model._
-import se.joham.funrts.model.Tile._
+import se.joham.funrts.scalego.{CESystem, Entity}
 
 import scala.collection.mutable
 
 /**
   * Created by johan on 2016-06-12.
   */
-case class PositionCESystem(entries: mutable.Map[Entity.Id, Positionable] = mutable.HashMap.empty) extends CESystem[Positionable] {
+case class PositionCESystem(entries: mutable.Map[Entity.Id, Positionable] = mutable.HashMap.empty) extends CESystem[Positionable, Context] {
 
-  override def put(entity: Entity.Id, component: Positionable)(implicit store: CEStore, terrain: Terrain): Unit = {
+  override def put(entity: Entity.Id, component: Positionable, context: Context): Unit = {
+    import context._
+    import Tile._
     val positions = component.positions
     val tiles = positions.map(terrain.apply)
 
     require(tiles.forall(_.isEitherType(component.acceptedTiles)), s"Cannot place entity $entity at $positions since tiles at that position are not compatible!")
     require(positions.forall(isVacant(_, entity)), s"Cannot place entity $entity at $positions since that position is already occupied!")
 
-    super.put(entity, component)
+    super.put(entity, component, context)
     println(s"Added component Positionable. ${Entity(entity).info}")
   }
 
-  override def update(dt: Long)(implicit store: CEStore, terrain: Terrain): Unit = {
+  override def update(dt: Long, context: Context): Unit = {
 
   }
 

@@ -1,9 +1,11 @@
 package se.joham.funrts.model
 
+import se.joham.funrts.scalego.{CEStore, Entity}
+
 /**
   * Created by johan on 2016-06-11.
   */
-case class Level(terrain: Terrain, entityStore: CEStore) {
+case class Level(terrain: Terrain, entityStore: CEStore[Context]) {
   implicit val _terrain = terrain
   implicit val _stor = entityStore
 
@@ -32,7 +34,7 @@ object Level {
             ny: Int,
             seed: String,
             generator: LevelGenerator,
-            entityStore: CEStore): Level = {
+            entityStore: CEStore[Context]): Level = {
     val terrain = generator.apply(nx, ny, seed)
     new Level(terrain, entityStore)
   }

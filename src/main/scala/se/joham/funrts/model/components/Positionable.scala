@@ -2,6 +2,7 @@ package se.joham.funrts.model.components
 
 import se.joham.funrts.math.Vec2FixPt
 import se.joham.funrts.model._
+import se.joham.funrts.scalego.{Component, ComponentType}
 
 import scala.language.implicitConversions
 

@@ -5,6 +5,7 @@ import se.joham.funrts.model._
 import org.json4s.jackson.JsonMethods.{compact, parse}
 import org.json4s.jackson.JsonMethods.{pretty => prty}
 import Extraction.{decompose, extract}
+import se.joham.funrts.scalego.{CESystem, Component, Entity}
 
 import scala.collection.mutable
 
@@ -35,26 +36,26 @@ object JSON {
     def this(terrain: Terrain) = this(terrain.nx, terrain.ny, Base64.encodeString(terrain.tiles))
     def toTerrain: Terrain = new Terrain(nx, ny, Base64.decodeBinary(base64Tiles))
   }
-  object CESystemSerializer extends CustomSerializer[CESystem[Component]](_ => ({
+  object CESystemSerializer extends CustomSerializer[CESystem[Component, _]](_ => ({
     case json => extract[CeSystemSerializable](json).toCeSystem },{
-    case system: CESystem[_] => decompose(CeSystemSerializable(system))
+    case system: CESystem[_, _] => decompose(CeSystemSerializable(system))
   }))
   case class CeSystemSerializable(clsName: String, entries: Map[Entity.Id, Component]) {
-    def toCeSystem: CESystem[Component] = {
+    def toCeSystem: CESystem[Component, _] = {
       CeSystemSerializable.getCtor(clsName)(new mutable.HashMap[Entity.Id, Component] ++ entries.map(p => p._1 -> p._2))
     }
   }
   object CeSystemSerializable {
-    private val ctors = new scala.collection.concurrent.TrieMap[String, mutable.Map[_,_] => CESystem[Component]]
-    private def getCtor(clsName: String): mutable.Map[_,_] => CESystem[Component] = {
+    private val ctors = new scala.collection.concurrent.TrieMap[String, mutable.Map[_,_] => CESystem[Component, _]]
+    private def getCtor(clsName: String): mutable.Map[_,_] => CESystem[Component, _] = {
       ctors.getOrElseUpdate(clsName, {
         val cls = Class.forName(clsName)
         val ctor = cls.getConstructor(classOf[mutable.Map[_,_]])
-        input => ctor.newInstance(input).asInstanceOf[CESystem[Component]]
+        input => ctor.newInstance(input).asInstanceOf[CESystem[Component, _]]
       })
     }
 
-    def apply[T <: Component](system: CESystem[T]): CeSystemSerializable = {
+    def apply[T <: Component](system: CESystem[T, _]): CeSystemSerializable = {
       CeSystemSerializable(system.getClass.getName, system.toMap)
     }
   }

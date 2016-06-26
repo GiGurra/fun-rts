@@ -2,6 +2,7 @@ package se.joham.funrts.model
 
 import se.gigurra.serviceutils.twitter.logging.Logging
 import se.joham.funrts.model.components.{Acting, BaseInfo, MovementLimits, Positionable}
+import se.joham.funrts.scalego.Entity
 
 /**
   * Created by johan on 2016-06-11.
@@ -12,20 +13,20 @@ case class GameSimulation(level: Level,
                           var iStep: Long) extends Logging {
   import level._
 
-  def update(aggregatedCommands: AggregatedCommands): Unit = {
-    validateInputs(aggregatedCommands)
-    applyCommands(aggregatedCommands)
-    runSimulationStep()
+  def update(aggregatedCommands: AggregatedCommands, context: Context): Unit = {
+    validateInputs(aggregatedCommands, context)
+    applyCommands(aggregatedCommands, context)
+    runSimulationStep(context)
     iStep += 1
   }
 
-  private def runSimulationStep(): Unit = {
+  private def runSimulationStep(context: Context): Unit = {
     for ((_, system) <- entityStore.systems) {
-      system.update(dt)
+      system.update(dt, context)
     }
   }
 
-  private def applyCommands(aggregatedCommands: AggregatedCommands): Unit = {
+  private def applyCommands(aggregatedCommands: AggregatedCommands, context: Context): Unit = {
     implicit val _bSys = entityStore.system[Acting]
     for {
       (playerId, commands) <- aggregatedCommands
@@ -33,7 +34,7 @@ case class GameSimulation(level: Level,
       entity                = Entity(command.entityId)
       actor                <- entity.get[Acting]
     } {
-      entityStore.system[Acting].put(entity, actor.copy(action = command.action))
+      entityStore.system[Acting].put(entity, actor.copy(action = command.action), context)
     }
   }
 
@@ -41,7 +42,7 @@ case class GameSimulation(level: Level,
     players.find(_.id == playerId)
   }
 
-  private def validateInputs(aggregatedCommands: AggregatedCommands) = {
+  private def validateInputs(aggregatedCommands: AggregatedCommands, context: Context) = {
     implicit val _bSys = entityStore.system[BaseInfo]
     def commandOnlyOwnedEntities: Boolean = {
       def verifyOwnership(playerId: Player.Id, command: Command): Boolean = {

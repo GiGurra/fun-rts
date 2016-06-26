@@ -40,9 +40,4 @@ case class Terrain(nx: Int, ny: Int, tiles: Array[Tile.Type]) {
     (pos.y * nx + pos.x).toInt
   }
 
-  @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
-  def duplicate: Terrain = {
-    copy(tiles = util.Arrays.copyOf(tiles, tiles.length))
-  }
-
 }

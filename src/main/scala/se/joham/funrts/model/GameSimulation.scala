@@ -2,7 +2,7 @@ package se.joham.funrts.model
 
 import se.gigurra.serviceutils.twitter.logging.Logging
 import se.joham.funrts.model.components.{Acting, BaseInfo, MovementLimits, Positionable}
-import se.joham.funrts.scalego.Entity
+import se.gigurra.scalego.Entity
 
 /**
   * Created by johan on 2016-06-11.

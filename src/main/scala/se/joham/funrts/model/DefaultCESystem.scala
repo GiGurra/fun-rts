@@ -1,6 +1,6 @@
 package se.joham.funrts.model
 
-import se.joham.funrts.scalego.{CESystem, Component, Entity}
+import se.gigurra.scalego.{CESystem, Component, Entity}
 
 import scala.collection.mutable
 

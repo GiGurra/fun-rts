@@ -1,7 +1,7 @@
 package se.joham.funrts.model
 
 import se.joham.funrts.math.Vec2FixPt
-import se.joham.funrts.scalego.Entity
+import se.gigurra.scalego.Entity
 
 /**
   * Created by johan on 2016-06-11.

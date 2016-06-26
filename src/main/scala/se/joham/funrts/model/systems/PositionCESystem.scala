@@ -2,7 +2,7 @@ package se.joham.funrts.model.systems
 
 import se.joham.funrts.model.components.Positionable
 import se.joham.funrts.model._
-import se.joham.funrts.scalego.{CESystem, Entity}
+import se.gigurra.scalego.{CESystem, Entity}
 
 import scala.collection.mutable
 

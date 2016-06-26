@@ -1,6 +1,6 @@
 package se.joham.funrts.model.components
 
-import se.joham.funrts.scalego.{Component, ComponentType}
+import se.gigurra.scalego.{Component, ComponentType}
 
 /**
   * Created by johan on 2016-06-12.

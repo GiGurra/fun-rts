@@ -1,6 +1,6 @@
 package se.joham.funrts.model
 
-import se.joham.funrts.scalego.CEStore
+import se.gigurra.scalego.CEStore
 
 /**
   * Created by johan on 2016-06-26.

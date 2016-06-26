@@ -6,7 +6,7 @@ import org.json4s.jackson.JsonMethods.{compact, parse}
 import org.json4s.jackson.JsonMethods.{pretty => prty}
 import Extraction.{decompose, extract}
 import se.joham.funrts.model.components.ComponentTypes
-import se.joham.funrts.scalego.{CESystem, Component, Entity}
+import se.gigurra.scalego.{CESystem, Component, Entity}
 
 import scala.collection.mutable
 

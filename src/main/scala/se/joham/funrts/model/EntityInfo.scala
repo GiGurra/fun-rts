@@ -1,6 +1,6 @@
 package se.joham.funrts.model
 
-import se.joham.funrts.scalego.{CEStore, Entity}
+import se.gigurra.scalego.{CEStore, Entity}
 import se.joham.funrts.util.JSON
 
 /**

@@ -4,7 +4,7 @@ import org.scalatest._
 import org.scalatest.mock._
 import se.joham.funrts.math.Vec2FixPt
 import se.joham.funrts.model.components._
-import se.joham.funrts.scalego.Entity
+import se.gigurra.scalego.Entity
 import se.joham.funrts.util.JSON
 
 class CEStoreSpec

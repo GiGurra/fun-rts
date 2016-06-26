@@ -1,5 +1,5 @@
 package se.joham.funrts.model
-import se.joham.funrts.scalego.Entity
+import se.gigurra.scalego.Entity
 
 import scala.language.implicitConversions
 

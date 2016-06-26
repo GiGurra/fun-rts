@@ -19,6 +19,9 @@ class CEStoreSpec
   val store = CEStore() ++ PositionCESystem() ++ DefaultCESystem[BaseInfo]() ++ DefaultCESystem[MovementLimits]() ++ DefaultCESystem[Acting]()
   val level = Level(10, 10, seed = "test", levelGen, store)
   import level._
+  implicit val _aSys = store.system[Acting]
+  implicit val _pSys = store.system[Positionable]
+  implicit val _bSys = store.system[BaseInfo]
 
   "CEStore" should {
 

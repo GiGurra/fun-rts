@@ -9,9 +9,9 @@ import scala.collection.mutable
 /**
   * Created by johan on 2016-06-12.
   */
-case class PositionCESystem(entries: mutable.Map[EntityId, Positionable] = mutable.HashMap.empty) extends CESystem[Positionable] {
+case class PositionCESystem(entries: mutable.Map[Entity.Id, Positionable] = mutable.HashMap.empty) extends CESystem[Positionable] {
 
-  override def put(entity: EntityId, component: Positionable)(implicit store: CEStore, terrain: Terrain): Unit = {
+  override def put(entity: Entity.Id, component: Positionable)(implicit store: CEStore, terrain: Terrain): Unit = {
     val positions = component.positions
     val tiles = positions.map(terrain.apply)
 
@@ -27,8 +27,8 @@ case class PositionCESystem(entries: mutable.Map[EntityId, Positionable] = mutab
   }
 
   def isConflict(component: Positionable, self: Entity): Boolean = !component.positions.forall(isVacant(_, self))
-  def isOccupied(pos: Pos, self: EntityId = null.asInstanceOf[EntityId]): Boolean = entries.filterKeys(_ != self).values.exists(_.contains(pos))
-  def isVacant(pos: Pos, self: EntityId = null.asInstanceOf[EntityId]): Boolean = !isOccupied(pos, self)
+  def isOccupied(pos: Pos.Type, self: Entity.Id = null.asInstanceOf[Entity.Id]): Boolean = entries.filterKeys(_ != self).values.exists(_.contains(pos))
+  def isVacant(pos: Pos.Type, self: Entity.Id = null.asInstanceOf[Entity.Id]): Boolean = !isOccupied(pos, self)
 
   def duplicate: PositionCESystem = {
     copy(entries.clone())

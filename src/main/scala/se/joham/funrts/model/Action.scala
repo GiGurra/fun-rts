@@ -7,11 +7,11 @@ import se.joham.funrts.math.Vec2FixPt
   */
 sealed trait Action
 case class Idle() extends Action
-case class MovingTo(pos: Pos) extends Action
-case class AttackingArea(pos: Pos) extends Action
-case class AttackingEntity(target: EntityId) extends Action
-case class MiningGold(goldMineId: EntityId) extends Action
-case class ChoppingLumber(pos: Pos) extends Action
+case class MovingTo(pos: Pos.Type) extends Action
+case class AttackingArea(pos: Pos.Type) extends Action
+case class AttackingEntity(target: Entity.Id) extends Action
+case class MiningGold(goldMineId: Entity.Id) extends Action
+case class ChoppingLumber(pos: Pos.Type) extends Action
 case class BuildingUnit() extends Action
 case class Researching() extends Action
 case class BuildingBuilding() extends Action

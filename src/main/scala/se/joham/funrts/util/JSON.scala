@@ -39,9 +39,9 @@ object JSON {
     case json => extract[CeSystemSerializable](json).toCeSystem },{
     case system: CESystem[_] => decompose(CeSystemSerializable(system))
   }))
-  case class CeSystemSerializable(clsName: String, entries: Map[EntityId, Component]) {
+  case class CeSystemSerializable(clsName: String, entries: Map[Entity.Id, Component]) {
     def toCeSystem: CESystem[Component] = {
-      CeSystemSerializable.getCtor(clsName)(new mutable.HashMap[EntityId, Component] ++ entries.map(p => p._1 -> p._2))
+      CeSystemSerializable.getCtor(clsName)(new mutable.HashMap[Entity.Id, Component] ++ entries.map(p => p._1 -> p._2))
     }
   }
   object CeSystemSerializable {

@@ -20,12 +20,16 @@ class ModelSpec
   val store = CEStore() ++ PositionCESystem() ++ DefaultCESystem[BaseInfo]() ++ DefaultCESystem[MovementLimits]() ++ DefaultCESystem[Acting]()
   val level = Level(10, 10, seed = "test", levelGen, store)
   import level._
+  implicit val _aSys = store.system[Acting]
+  implicit val _pSys = store.system[Positionable]
+  implicit val _bSys = store.system[BaseInfo]
+  implicit val _mSys = store.system[MovementLimits]
 
-  def makeBuilding(id: EntityId, name: String, pos: Pos, team: Team, size: Size = Vec2FixPt(2,2)): Entity = {
+  def makeBuilding(id: Entity.Id, name: String, pos: Pos.Type, team: Team, size: Size.Type = Vec2FixPt(2,2)): Entity = {
     Entity.builder(id) + Positionable(pos, size) + BaseInfo(name, team)
   }
 
-  def makeCharacter(id: EntityId, name: String, pos: Pos, team: Team): Entity = {
+  def makeCharacter(id: Entity.Id, name: String, pos: Pos.Type, team: Team): Entity = {
     Entity.builder(id) + Positionable(pos) + MovementLimits(2L) + BaseInfo(name, team)
   }
 

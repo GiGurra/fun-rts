@@ -7,7 +7,7 @@ import scala.language.implicitConversions
 /**
   * Created by johan on 2016-06-12.
   */
-case class Entity(id: EntityId) extends AnyVal {
+case class Entity(id: Entity.Id) extends AnyVal {
   def +=[T <: Component: ComponentType](component: T)(implicit store: CEStore, terrain: Terrain): Entity = {
     store.system[T].put(this, component)
     this
@@ -28,7 +28,9 @@ case class Entity(id: EntityId) extends AnyVal {
   }
 }
 object Entity {
-  def builder(id: EntityId)(implicit store: CEStore, terrain: Terrain): Builder = new Builder(Entity(id))
+  type Id = String
+
+  def builder(id: Entity.Id)(implicit store: CEStore, terrain: Terrain): Builder = new Builder(Entity(id))
 
   case class Builder(entity: Entity)(implicit store: CEStore, terrain: Terrain) {
     def +[T <: Component: ComponentType](component: T): Builder = {
@@ -40,5 +42,5 @@ object Entity {
     implicit def builder2entity(b: Builder): Entity = b.entity
   }
 
-  implicit def e2id(e: Entity): EntityId = e.id
+  implicit def e2id(e: Entity): Entity.Id = e.id
 }

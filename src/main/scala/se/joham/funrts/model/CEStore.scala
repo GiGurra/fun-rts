@@ -5,18 +5,18 @@ import scala.language.implicitConversions
 /**
   * Created by johan on 2016-06-11.
   */
-case class CEStore(systems: Map[ComponentTypeId, CESystem[Component]] = Map.empty)  {
+case class CEStore(systems: Map[ComponentType.Id, CESystem[Component]] = Map.empty)  {
 
   def system[T <: Component : ComponentType]: CESystem[T] = {
     val typ = implicitly[ComponentType[T]]
     systems.getOrElse(typ.id, throw new RuntimeException(s"No system of type $typ in $this")).asInstanceOf[CESystem[T]]
   }
 
-  def -=(entity: EntityId): Unit = {
+  def -=(entity: Entity.Id): Unit = {
     systems.values.foreach(_ -= entity)
   }
 
-  def componentsOf(entity: EntityId): Iterable[Component] = {
+  def componentsOf(entity: Entity.Id): Iterable[Component] = {
     for {
       system <- systems.values
       component <- system.get(entity)
@@ -25,7 +25,7 @@ case class CEStore(systems: Map[ComponentTypeId, CESystem[Component]] = Map.empt
     }
   }
 
-  def containsEntity(entity: EntityId): Boolean = {
+  def containsEntity(entity: Entity.Id): Boolean = {
     systems.values.exists(_.contains(entity))
   }
 
@@ -34,7 +34,7 @@ case class CEStore(systems: Map[ComponentTypeId, CESystem[Component]] = Map.empt
   }
   
   @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
-  def allEntities: Set[EntityId] = {
+  def allEntities: Set[Entity.Id] = {
     systems.values.flatMap(_.keys).toSet
   }
 
@@ -44,7 +44,7 @@ case class CEStore(systems: Map[ComponentTypeId, CESystem[Component]] = Map.empt
   }
 
   @deprecated("Use sparingly - VERY expensive. For testing/debugging", "2016-06-12")
-  def -(entity: EntityId): CEStore = {
+  def -(entity: Entity.Id): CEStore = {
     val out = duplicate
     out -= entity
     out
@@ -52,5 +52,5 @@ case class CEStore(systems: Map[ComponentTypeId, CESystem[Component]] = Map.empt
 }
 
 object CEStore {
-  implicit def store2map(store: CEStore): scala.collection.Map[ComponentTypeId, CESystem[Component]] = store.systems
+  implicit def store2map(store: CEStore): scala.collection.Map[ComponentType.Id, CESystem[Component]] = store.systems
 }

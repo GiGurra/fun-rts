@@ -1,7 +1,7 @@
 package se.joham.funrts.model
 
 import se.gigurra.serviceutils.twitter.logging.Logging
-import se.joham.funrts.model.components.{Acting, BaseInfo}
+import se.joham.funrts.model.components.{Acting, BaseInfo, MovementLimits, Positionable}
 
 /**
   * Created by johan on 2016-06-11.
@@ -26,6 +26,7 @@ case class GameSimulation(level: Level,
   }
 
   private def applyCommands(aggregatedCommands: AggregatedCommands): Unit = {
+    implicit val _bSys = entityStore.system[Acting]
     for {
       (playerId, commands) <- aggregatedCommands
       command              <- commands
@@ -36,13 +37,14 @@ case class GameSimulation(level: Level,
     }
   }
 
-  private def findPlayer(playerId: PlayerId): Option[Player] = {
+  private def findPlayer(playerId: Player.Id): Option[Player] = {
     players.find(_.id == playerId)
   }
 
   private def validateInputs(aggregatedCommands: AggregatedCommands) = {
+    implicit val _bSys = entityStore.system[BaseInfo]
     def commandOnlyOwnedEntities: Boolean = {
-      def verifyOwnership(playerId: PlayerId, command: Command): Boolean = {
+      def verifyOwnership(playerId: Player.Id, command: Command): Boolean = {
         findPlayer(playerId) match {
           case None =>
             logger.error(s"Command pretended to come from player $playerId but no such player exists")

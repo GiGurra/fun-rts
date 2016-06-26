@@ -12,7 +12,7 @@ object Tile {
 
   val TYPE_BITS    = 0x0F : Byte
 
-  implicit class RichTile(val tile: Tile) extends AnyVal {
+  implicit class RichTile(val tile: Tile.Type) extends AnyVal {
     def isType(t: Byte)       : Boolean = (tile & Tile.TYPE_BITS) == t
     def isEitherType(t: Byte*): Boolean = t.exists(isType)
     def isEitherType(t: Iterable[Byte]): Boolean = t.exists(isType)

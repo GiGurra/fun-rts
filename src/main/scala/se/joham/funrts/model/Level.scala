@@ -1,18 +1,11 @@
 package se.joham.funrts.model
 
-import se.joham.funrts.model.components._
-import se.joham.funrts.model.systems.PositionCESystem
-
 /**
   * Created by johan on 2016-06-11.
   */
 case class Level(terrain: Terrain, entityStore: CEStore) {
   implicit val _terrain = terrain
   implicit val _stor = entityStore
-  implicit val _pSys = entityStore.system[Positionable]
-  implicit val _aSys = entityStore.system[Acting]
-  implicit val _mSys = entityStore.system[MovementLimits]
-  implicit val _bSys = entityStore.system[BaseInfo]
 
   def -=(entity: Entity): Unit = {
     entityStore -= entity

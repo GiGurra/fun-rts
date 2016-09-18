@@ -4,10 +4,9 @@ val funrts = Project(id = "funrts", base = file("."))
   .settings(
     organization := "se.joham",
     version := "SNAPSHOT",
-
     scalaVersion := "2.11.8",
-
     libraryDependencies ++= Seq(
+      "org.fusesource.jansi"  %   "jansi"                 % "1.13",
       "com.badlogicgames.gdx" %   "gdx"                   % ext_libgdxVersion,
       "com.badlogicgames.gdx" %   "gdx-freetype"          % ext_libgdxVersion,
       "com.badlogicgames.gdx" %   "gdx-backend-lwjgl"     % ext_libgdxVersion,

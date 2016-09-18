@@ -1,7 +1,6 @@
 package se.joham.funrts.model
 
 import se.joham.funrts.math.Vec2FixPt
-import se.gigurra.scalego.Entity
 
 /**
   * Created by johan on 2016-06-11.
@@ -10,8 +9,8 @@ sealed trait Action
 case class Idle() extends Action
 case class MovingTo(pos: Pos.Type) extends Action
 case class AttackingArea(pos: Pos.Type) extends Action
-case class AttackingEntity(target: Entity.Id) extends Action
-case class MiningGold(goldMineId: Entity.Id) extends Action
+case class AttackingEntity(target: String) extends Action
+case class MiningGold(goldMineId: String) extends Action
 case class ChoppingLumber(pos: Pos.Type) extends Action
 case class BuildingUnit() extends Action
 case class Researching() extends Action

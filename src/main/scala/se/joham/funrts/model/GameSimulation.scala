@@ -1,8 +1,8 @@
 package se.joham.funrts.model
 
 import se.gigurra.serviceutils.twitter.logging.Logging
-import se.joham.funrts.model.components.{Acting, BaseInfo, MovementLimits, Positionable}
-import se.gigurra.scalego.Entity
+import se.joham.funrts.model.components.{Acting, BaseInfo}
+import se.joham.funrts.model.systems.UpdatingSystem
 
 /**
   * Created by johan on 2016-06-11.
@@ -12,29 +12,31 @@ case class GameSimulation(level: Level,
                           dt: Long,
                           var iStep: Long) extends Logging {
   import level._
+  import FunRtsECS._
 
-  def update(aggregatedCommands: AggregatedCommands, context: Context): Unit = {
-    validateInputs(aggregatedCommands, context)
-    applyCommands(aggregatedCommands, context)
-    runSimulationStep(context)
+  def update(aggregatedCommands: AggregatedCommands): Unit = {
+    validateInputs(aggregatedCommands)
+    applyCommands(aggregatedCommands)
+    runSimulationStep()
     iStep += 1
   }
 
-  private def runSimulationStep(context: Context): Unit = {
+  private def runSimulationStep(): Unit = {
     for ((_, system) <- entityStore.systems) {
-      system.update(dt, context)
+      system match {
+        case updatingSystem: UpdatingSystem[_] => updatingSystem.update(dt, level)
+        case _ =>
+      }
     }
   }
 
-  private def applyCommands(aggregatedCommands: AggregatedCommands, context: Context): Unit = {
-    implicit val _bSys = entityStore.system[Acting]
+  private def applyCommands(aggregatedCommands: AggregatedCommands): Unit = {
+    implicit val actingSystem = entityStore.system[Acting]
     for {
       (playerId, commands) <- aggregatedCommands
       command              <- commands
-      entity                = Entity(command.entityId)
-      actor                <- entity.get[Acting]
     } {
-      entityStore.system[Acting].put(entity, actor.copy(action = command.action), context)
+      actingSystem.put(command.entityId, Acting(action = command.action))
     }
   }
 
@@ -42,8 +44,8 @@ case class GameSimulation(level: Level,
     players.find(_.id == playerId)
   }
 
-  private def validateInputs(aggregatedCommands: AggregatedCommands, context: Context) = {
-    implicit val _bSys = entityStore.system[BaseInfo]
+  private def validateInputs(aggregatedCommands: AggregatedCommands) = {
+    implicit val baseInfoSystem = entityStore.system[BaseInfo]
     def commandOnlyOwnedEntities: Boolean = {
       def verifyOwnership(playerId: Player.Id, command: Command): Boolean = {
         findPlayer(playerId) match {
@@ -51,7 +53,7 @@ case class GameSimulation(level: Level,
             logger.error(s"Command pretended to come from player $playerId but no such player exists")
             false
           case Some(player) =>
-            Entity(command.entityId).get[BaseInfo] match {
+            baseInfoSystem.get(command.entityId) match {
               case Some(info) if info.team != player.team =>
                 logger.error(s"Illegal command received from player $player. Tried to command units of team ${info.team} which isn't his")
                 false

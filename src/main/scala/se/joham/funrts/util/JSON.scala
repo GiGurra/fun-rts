@@ -2,69 +2,46 @@ package se.joham.funrts.util
 
 import org.json4s.{CustomSerializer, Extraction, ShortTypeHints}
 import se.joham.funrts.model._
+import Extraction.{decompose, extract}
+import org.json4s.JsonAST.JValue
+import se.gigurra.scalego.serialization.KnownSubTypes
+import se.gigurra.scalego.serialization.json.JsonSerializer
+import se.joham.funrts.model.FunRtsECS.{ECS, IdTypes}
 import org.json4s.jackson.JsonMethods.{compact, parse}
 import org.json4s.jackson.JsonMethods.{pretty => prty}
-import Extraction.{decompose, extract}
-import se.joham.funrts.model.components.ComponentTypes
-import se.gigurra.scalego.{CESystem, Component, Entity}
-
-import scala.collection.mutable
 
 /**
   * Created by johan on 2016-06-12.
   */
 object JSON {
 
-  implicit def fmts: org.json4s.Formats = defaultFormats
+  def writeAst(ecs: ECS): JValue = ecsSerializer.SerializableOps(ecs).toJsonAst
+  def    write(ecs: ECS, pretty: Boolean): String = ecsSerializer.SerializableOps(ecs).toJson(pretty)
+  def writeAst(terrain: Terrain): JValue = decompose(terrain)
+  def    write(terrain: Terrain, pretty: Boolean): String = if (pretty) prty(writeAst(terrain)) else compact(writeAst(terrain))
 
-  def read[T : Manifest](input: String): T = {
-    extract[T](parse(input))
-  }
+  def     readEcsAst(ecs: ECS, json: JValue): Unit = ecsSerializer.SerializableOps(ecs).appendJsonAst(json)
+  def        readEcs(ecs: ECS, json: String): Unit = ecsSerializer.SerializableOps(ecs).appendJson(json)
+  def readTerrainAst(json: JValue): Terrain = extract[Terrain](json)
+  def    readTerrain(json: String): Terrain = readTerrainAst(parse(json))
 
-  def write[T : Manifest](input: T, pretty: Boolean = false): String = {
-    if (pretty) prty(decompose(input))
-    else compact(decompose(input))
-  }
 
   //////////////////////////////////////////////////////////////////////////////////////
-
 
   object TerrainSerializer extends CustomSerializer[Terrain](_ => ({
     case json => extract[TerrainSerializable](json).toTerrain },{
     case terrain: Terrain => decompose(new TerrainSerializable(terrain))
   }))
+
   case class TerrainSerializable(nx: Int, ny: Int, base64Tiles: String) {
     def this(terrain: Terrain) = this(terrain.nx, terrain.ny, Base64.encodeString(terrain.tiles))
-    def toTerrain: Terrain = new Terrain(nx, ny, Base64.decodeBinary(base64Tiles))
-  }
-  object CESystemSerializer extends CustomSerializer[CESystem[Component, _]](_ => ({
-    case json => extract[CeSystemSerializable](json).toCeSystem },{
-    case system: CESystem[_, _] => decompose(CeSystemSerializable(system))
-  }))
-  case class CeSystemSerializable(clsName: String, entries: Map[Entity.Id, Component]) {
-    def toCeSystem: CESystem[Component, _] = {
-      CeSystemSerializable.getCtor(clsName)(new mutable.HashMap[Entity.Id, Component] ++ entries.map(p => p._1 -> p._2))
-    }
-  }
-  object CeSystemSerializable {
-    private val ctors = new scala.collection.concurrent.TrieMap[String, mutable.Map[_,_] => CESystem[Component, _]]
-    private def getCtor(clsName: String): mutable.Map[_,_] => CESystem[Component, _] = {
-      ctors.getOrElseUpdate(clsName, {
-        val cls = Class.forName(clsName)
-        val ctor = cls.getConstructor(classOf[mutable.Map[_,_]])
-        input => ctor.newInstance(input).asInstanceOf[CESystem[Component, _]]
-      })
-    }
-
-    def apply[T <: Component](system: CESystem[T, _]): CeSystemSerializable = {
-      CeSystemSerializable(system.getClass.getName, system.toMap)
-    }
+    def toTerrain: Terrain = Terrain(nx, ny, Base64.decodeBinary(base64Tiles))
   }
 
-  lazy val defaultFormats =
-    org.json4s.DefaultFormats +
-      TerrainSerializer +
-      CESystemSerializer +
-      ShortTypeHints(ComponentTypes.classes) +
-      ShortTypeHints(Action.classes)
+  implicit lazy val jsonFormats = org.json4s.DefaultFormats + TerrainSerializer + ShortTypeHints(Action.classes)
+  val ecsSerializer = new JsonSerializer[IdTypes](
+    knownSubtypes = KnownSubTypes.fromShortClassName(types = Action.classes:_*),
+    jsonFormats = jsonFormats
+  )
+
 }

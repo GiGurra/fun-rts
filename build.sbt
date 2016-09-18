@@ -22,4 +22,4 @@ val funrts = Project(id = "funrts", base = file("."))
     
   )
   .dependsOn(uri("git://github.com/GiGurra/service-utils.git#0.1.12"))
-  .dependsOn(uri("git://github.com/GiGurra/scalego#0.1.0"))
+  .dependsOn(uri("git://github.com/GiGurra/scalego.git#0.3.6"))
